@@ -37,17 +37,6 @@ export default function Home() {
       return;
     }
 
-    if (!videoRef.current) {
-      setDebugInfo("Video element reference not available yet. Waiting a moment...");
-      // Try again in a moment
-      setTimeout(() => {
-        if (isMounted) {
-          requestCameraPermission();
-        }
-      }, 500);
-      return;
-    }
-
     setIsLoading(true);
     setErrorMessage(null);
     setDebugInfo("Starting camera request...");
@@ -84,36 +73,43 @@ export default function Home() {
       setDebugInfo("Camera stream obtained successfully");
       streamRef.current = stream;
       
-      if (videoRef.current) {
-        setDebugInfo("Setting video source object");
-        videoRef.current.srcObject = stream;
-        
-        // Add event listeners to track video loading
-        videoRef.current.onloadedmetadata = () => {
-          setDebugInfo("Video metadata loaded");
-          // Start playing the video after metadata is loaded
-          videoRef.current?.play().catch(e => {
-            setDebugInfo(`Error playing video: ${e}`);
-          });
-        };
-        
-        videoRef.current.onloadeddata = () => {
-          setDebugInfo("Video data loaded, starting playback");
+      // Even if videoRef.current is null now, we can still proceed since 
+      // we've moved the video element out of conditional rendering
+      // This will ensure the stream is ready when the video element becomes available
+      setTimeout(() => {
+        if (videoRef.current) {
+          setDebugInfo("Setting video source object");
+          videoRef.current.srcObject = stream;
+          
+          // Add event listeners to track video loading
+          videoRef.current.onloadedmetadata = () => {
+            setDebugInfo("Video metadata loaded");
+            videoRef.current?.play().catch(e => {
+              setDebugInfo(`Error playing video: ${e}`);
+            });
+          };
+          
+          videoRef.current.onloadeddata = () => {
+            setDebugInfo("Video data loaded, starting playback");
+            setIsLoading(false);
+            setHasPermission(true);
+            setIsCapturing(true);
+          };
+          
+          videoRef.current.onerror = (e) => {
+            setDebugInfo(`Video error: ${e}`);
+            setErrorMessage("Error loading video stream");
+            setIsLoading(false);
+            setHasPermission(false);
+          };
+        } else {
+          setDebugInfo("Video element still not available after getting stream");
+          // We'll set the state to proceed anyway, and the stream will be connected when the element renders
           setIsLoading(false);
           setHasPermission(true);
           setIsCapturing(true);
-        };
-        
-        videoRef.current.onerror = (e) => {
-          setDebugInfo(`Video error: ${e}`);
-          setErrorMessage("Error loading video stream");
-          setIsLoading(false);
-          setHasPermission(false);
-        };
-      } else {
-        setDebugInfo("Video element is not available even after getting stream");
-        throw new Error("Video element is not available");
-      }
+        }
+      }, 50); // Short delay to ensure DOM updates have processed
     } catch (err) {
       console.error('Error accessing camera:', err);
       setIsLoading(false);
@@ -259,6 +255,15 @@ export default function Home() {
       <div className={styles.container}>
         <h1 className={styles.title}>Mobile Camera</h1>
         
+        {/* Always render the video element, but keep it hidden when not active */}
+        <video 
+          ref={videoRef} 
+          className={`${styles.videoPreview} ${facingMode === 'user' ? styles.mirror : ''} ${isCapturing ? styles.active : styles.hidden}`}
+          autoPlay 
+          playsInline 
+          muted
+        />
+        
         {!isClient ? (
           <div className={styles.loadingContainer}>
             <div className={styles.spinner}></div>
@@ -300,13 +305,7 @@ export default function Home() {
           </div>
         ) : isCapturing ? (
           <div className={styles.cameraContainer}>
-            <video 
-              ref={videoRef} 
-              className={`${styles.videoPreview} ${facingMode === 'user' ? styles.mirror : ''}`}
-              autoPlay 
-              playsInline 
-              muted
-            />
+            {/* The video is already rendered above */}
             <div className={styles.controls}>
               <button 
                 className={styles.switchButton}
