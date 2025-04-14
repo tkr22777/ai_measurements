@@ -3,7 +3,8 @@ let store: Record<string, any> = {
   appName: "Mobile Camera App",
   version: "1.0.0",
   lastUpdated: new Date().toISOString(),
-  features: ["Photo Capture", "Camera Switching", "Download Images"]
+  features: ["Photo Capture", "Camera Switching", "Download Images"],
+  photoCount: 0
 };
 
 export const db = {
@@ -23,6 +24,13 @@ export const db = {
     return { ...store };
   }
 };
+
+// Export the function with the expected name to fix the build error
+export async function getAllValues() {
+  // Simulate an async operation to make this more realistic
+  await new Promise(resolve => setTimeout(resolve, 50));
+  return { ...store };
+}
 
 // Initialize with some default values if needed
 export function initializeDb() {

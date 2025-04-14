@@ -1,13 +1,38 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { getAllValues } from '@/app/utils/db';
 import styles from './styles.module.css';
 import PhotoCounter from './PhotoCounter';
 
-// This is a Server Component - note the absence of 'use client'
-// It will fetch data on the server during rendering
-async function AppInfo() {
-  // Fetch data from our database
-  const data = await getAllValues();
+// Using client component pattern since we need to use this in a client context
+export default function AppInfo() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Fetch data when component mounts
+    const fetchData = async () => {
+      try {
+        const dbData = await getAllValues();
+        setData(dbData);
+      } catch (err) {
+        console.error('Error fetching app data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+  
+  if (loading) {
+    return <div className={styles.loading}>Loading app information...</div>;
+  }
+  
+  if (!data) {
+    return <div className={styles.error}>Failed to load app information</div>;
+  }
   
   // Format the lastUpdated date for display
   const formattedDate = new Date(data.lastUpdated).toLocaleDateString(undefined, {
@@ -46,10 +71,8 @@ async function AppInfo() {
         </div>
         
         {/* Client component for interactive counter */}
-        <PhotoCounter initialCount={data.photoCount} />
+        <PhotoCounter initialCount={data.photoCount || 0} />
       </div>
     </div>
   );
-}
-
-export default AppInfo; 
+}        

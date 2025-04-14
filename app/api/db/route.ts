@@ -49,16 +49,19 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * PATCH /api/db - Special endpoint to increment visit count
+ * PATCH /api/db - Increment a counter value
  */
 export async function PATCH(request: NextRequest) {
   const now = Date.now();
+  const searchParams = request.nextUrl.searchParams;
+  const key = searchParams.get('key') || 'visitCount';
   
   // Prevent rapid successive increments (throttling)
   if (now - lastIncrementTime < THROTTLE_INTERVAL) {
     // If a request comes in too quickly after the last one, just return the current count
     return NextResponse.json({ 
-      visitCount: db.get('visitCount') || 0,
+      key,
+      value: db.get(key) || 0,
       throttled: true
     });
   }
@@ -66,10 +69,10 @@ export async function PATCH(request: NextRequest) {
   // Update the last increment time
   lastIncrementTime = now;
   
-  // Increment the visit counter
-  const currentCount = db.get('visitCount') || 0;
+  // Increment the counter for the specified key
+  const currentCount = db.get(key) || 0;
   const newCount = currentCount + 1;
-  db.set('visitCount', newCount);
+  db.set(key, newCount);
   
-  return NextResponse.json({ visitCount: newCount });
+  return NextResponse.json({ key, value: newCount });
 } 

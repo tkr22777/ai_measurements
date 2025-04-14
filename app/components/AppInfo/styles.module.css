@@ -1,35 +1,32 @@
 .container {
   width: 100%;
-  margin-top: 2rem;
-  padding: 1rem;
+  margin: 2rem 0;
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
-  text-align: center;
   color: #333;
+  text-align: center;
 }
 
 .infoBox {
-  background-color: #f9f9f9;
+  background-color: #f8f9fa;
   border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1.5rem;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .infoItem {
-  margin-bottom: 1rem;
+  margin: 0.5rem 0;
   display: flex;
   flex-direction: column;
 }
 
 .label {
   font-weight: 600;
-  color: #555;
   margin-bottom: 0.25rem;
+  color: #555;
 }
 
 .value {
@@ -37,22 +34,31 @@
 }
 
 .featureList {
-  list-style-type: disc;
-  padding-left: 1.5rem;
   margin-top: 0.5rem;
+  padding-left: 1.5rem;
 }
 
 .featureList li {
   margin-bottom: 0.25rem;
 }
 
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.error {
+  text-align: center;
+  padding: 1rem;
+  color: #e74c3c;
+}
+
 .counterBox {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #eaeaea;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  border-top: 1px solid #eee;
+  text-align: center;
 }
 
 .counterLabel {
@@ -62,7 +68,7 @@
 }
 
 .counterValue {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
   color: #0070f3;
   margin-bottom: 1rem;
@@ -74,7 +80,7 @@
   border: none;
   border-radius: 5px;
   padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -83,14 +89,19 @@
   background-color: #0060df;
 }
 
+.counterButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 @media (prefers-color-scheme: dark) {
   .title {
     color: #f0f0f0;
   }
   
   .infoBox {
-    background-color: #1a1a1a;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background-color: #222;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
   
   .label {
@@ -98,7 +109,15 @@
   }
   
   .value {
-    color: #f0f0f0;
+    color: #ddd;
+  }
+  
+  .loading {
+    color: #aaa;
+  }
+  
+  .counterBox {
+    border-top: 1px solid #333;
   }
   
   .counterLabel {
@@ -108,4 +127,4 @@
   .counterValue {
     color: #3291ff;
   }
-} 
+}

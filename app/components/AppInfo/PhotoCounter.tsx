@@ -53,4 +53,4 @@ const PhotoCounter: React.FC<PhotoCounterProps> = ({ initialCount }) => {
   );
 };
 
-export default PhotoCounter; 
+export default PhotoCounter;      
