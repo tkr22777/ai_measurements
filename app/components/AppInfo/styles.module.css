@@ -1,0 +1,111 @@
+.container {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #333;
+}
+
+.infoBox {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.infoItem {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+.value {
+  color: #333;
+}
+
+.featureList {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.featureList li {
+  margin-bottom: 0.25rem;
+}
+
+.counterBox {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.counterLabel {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+.counterValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0070f3;
+  margin-bottom: 1rem;
+}
+
+.counterButton {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.counterButton:hover {
+  background-color: #0060df;
+}
+
+@media (prefers-color-scheme: dark) {
+  .title {
+    color: #f0f0f0;
+  }
+  
+  .infoBox {
+    background-color: #1a1a1a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .label {
+    color: #aaa;
+  }
+  
+  .value {
+    color: #f0f0f0;
+  }
+  
+  .counterLabel {
+    color: #aaa;
+  }
+  
+  .counterValue {
+    color: #3291ff;
+  }
+} 

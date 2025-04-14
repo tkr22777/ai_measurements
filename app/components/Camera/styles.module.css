@@ -1,0 +1,137 @@
+.cameraContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.videoPreview {
+  width: 100%;
+  max-height: 70vh;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #000;
+}
+
+/* Mirror effect for front camera */
+.mirror {
+  transform: scaleX(-1);
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  gap: 20px;
+}
+
+.captureButton {
+  background-color: #ff4040;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.captureButton:hover {
+  transform: scale(1.05);
+}
+
+.captureButton:active {
+  transform: scale(0.95);
+}
+
+.captureButton::after {
+  content: '';
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.switchButton {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  outline: none;
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+}
+
+.switchButton:hover {
+  transform: scale(1.1);
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.switchButton:active {
+  transform: scale(0.95);
+}
+
+.switchButton svg {
+  width: 24px;
+  height: 24px;
+  stroke: white;
+  stroke-width: 2;
+}
+
+/* Classes for showing/hiding the video element */
+.active {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .videoPreview {
+    border-radius: 0;
+    max-height: 60vh;
+    width: 100%;
+  }
+  
+  .captureButton {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .captureButton::after {
+    width: 52px;
+    height: 52px;
+  }
+  
+  .switchButton {
+    bottom: 20px;
+    right: 25px;
+  }
+
+  .controls {
+    bottom: 30px;
+  }
+} 

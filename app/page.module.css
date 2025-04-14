@@ -30,8 +30,6 @@
   color: #333;
 }
 
-.permissionRequest,
-.permissionDenied,
 .loadingContainer {
   display: flex;
   flex-direction: column;
@@ -44,174 +42,12 @@
   min-height: 200px;
 }
 
-.permissionRequest p,
-.permissionDenied p,
 .loadingContainer p {
   margin-bottom: 1rem;
   color: #555;
   line-height: 1.5;
 }
 
-.button {
-  background-color: #0070f3;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin: 0.5rem;
-  outline: none;
-}
-
-.button:hover {
-  background-color: #0060df;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.button:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-.primaryButton {
-  background-color: #0ab14b;
-}
-
-.primaryButton:hover {
-  background-color: #09a142;
-}
-
-.cameraContainer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.videoPreview {
-  width: 100%;
-  max-height: 70vh;
-  object-fit: cover;
-  border-radius: 8px;
-  background-color: #000;
-}
-
-/* Mirror effect for front camera */
-.mirror {
-  transform: scaleX(-1);
-}
-
-.controls {
-  position: absolute;
-  bottom: 20px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-  gap: 20px;
-}
-
-.captureButton {
-  background-color: #ff4040;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 55px;
-  height: 55px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  position: relative;
-  transition: all 0.2s ease;
-  outline: none;
-}
-
-.captureButton:hover {
-  transform: scale(1.05);
-}
-
-.captureButton:active {
-  transform: scale(0.95);
-}
-
-.captureButton::after {
-  content: '';
-  position: absolute;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid white;
-}
-
-.switchButton {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
-  outline: none;
-  position: absolute;
-  right: 20px;
-  bottom: 10px;
-}
-
-.switchButton:hover {
-  transform: scale(1.1);
-  background-color: rgba(0, 0, 0, 0.7);
-}
-
-.switchButton:active {
-  transform: scale(0.95);
-}
-
-.switchButton svg {
-  width: 24px;
-  height: 24px;
-  stroke: white;
-  stroke-width: 2;
-}
-
-.imagePreviewContainer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.imagePreview {
-  width: 100%;
-  max-height: 70vh;
-  object-fit: contain;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.buttonGroup {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 0.5rem;
-  width: 100%;
-}
-
-/* Loading spinner */
 .spinner {
   width: 40px;
   height: 40px;
@@ -245,45 +81,11 @@
     padding: 0;
   }
   
-  .videoPreview,
-  .imagePreview {
-    border-radius: 0;
-    max-height: 60vh;
-    width: 100%;
-  }
-  
-  .button {
-    padding: 0.7rem 1.5rem;
-    width: auto;
-    flex: 1;
-    max-width: 150px;
-  }
-  
-  .captureButton {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .captureButton::after {
-    width: 52px;
-    height: 52px;
-  }
-  
-  .switchButton {
-    bottom: 20px;
-    right: 25px;
-  }
-  
   .title {
     margin-top: 0.5rem;
   }
-
-  .controls {
-    bottom: 30px;
-  }
 }
 
-/* Default styles for dark mode */
 @media (prefers-color-scheme: dark) {
   .main {
     background-color: #000;
@@ -297,43 +99,13 @@
     color: #f0f0f0;
   }
   
-  .permissionRequest p,
-  .permissionDenied p,
   .loadingContainer p {
     color: #ccc;
-  }
-  
-  .button {
-    background-color: #0070f3;
-  }
-  
-  .button:hover {
-    background-color: #0060df;
-  }
-  
-  .primaryButton {
-    background-color: #0ab14b;
-  }
-  
-  .primaryButton:hover {
-    background-color: #09a142;
-  }
-  
-  .imagePreview {
-    border: 1px solid #333;
   }
   
   .spinner {
     border-color: rgba(0, 112, 243, 0.2);
     border-left-color: #0070f3;
-  }
-  
-  .switchButton {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  .switchButton:hover {
-    background-color: rgba(255, 255, 255, 0.3);
   }
 }
 
@@ -385,4 +157,39 @@
 
 .hidden {
   display: none;
+}
+
+.infoButton {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+  outline: none;
+}
+
+.infoButton:hover {
+  background-color: #5649c0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.infoButton:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .infoButton {
+    background-color: #5649c0;
+  }
+  
+  .infoButton:hover {
+    background-color: #4a3db3;
+  }
 } 

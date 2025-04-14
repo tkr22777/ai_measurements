@@ -1,0 +1,92 @@
+.imagePreviewContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.imagePreview {
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.button {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0.5rem;
+  outline: none;
+}
+
+.button:hover {
+  background-color: #0060df;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.primaryButton {
+  background-color: #0ab14b;
+}
+
+.primaryButton:hover {
+  background-color: #09a142;
+}
+
+@media (max-width: 600px) {
+  .imagePreview {
+    border-radius: 0;
+    max-height: 60vh;
+  }
+  
+  .button {
+    padding: 0.7rem 1.5rem;
+    width: auto;
+    flex: 1;
+    max-width: 150px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .imagePreview {
+    border: 1px solid #333;
+  }
+  
+  .button {
+    background-color: #0070f3;
+  }
+  
+  .button:hover {
+    background-color: #0060df;
+  }
+  
+  .primaryButton {
+    background-color: #0ab14b;
+  }
+  
+  .primaryButton:hover {
+    background-color: #09a142;
+  }
+} 
