@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './styles.module.css';
 import CameraControls from './CameraControls';
-import useCamera from '../../hooks/useCamera';
-import usePhotoCapture from '../../hooks/usePhotoCapture';
+import useCameraCapture from '../../hooks/useCameraCapture';
 
 interface CameraProps {
   onPhotoCapture: (imageUrl: string) => void;
@@ -11,55 +10,20 @@ interface CameraProps {
 }
 
 const Camera: React.FC<CameraProps> = ({ onPhotoCapture, onError, onDebug }) => {
-  const [isCapturing, setIsCapturing] = useState(false);
-
-  // Initialize camera hook
-  const {
-    videoRef,
-    hasPermission,
-    isLoading,
-    errorMessage,
-    facingMode,
-    requestCameraPermission,
-    switchCamera,
-    stopCamera,
-  } = useCamera({
-    onError,
-    onDebug,
-  });
-
-  // Initialize photo capture hook
-  const { canvasRef, capturedImage, capturePhoto } = usePhotoCapture({
-    onError,
-    onDebug,
-  });
-
-  // When camera is ready, set capturing state
-  useEffect(() => {
-    if (hasPermission === true && !isLoading) {
-      setIsCapturing(true);
-    } else {
-      setIsCapturing(false);
-    }
-  }, [hasPermission, isLoading]);
-
-  // Handle photo capture
-  const handleCapturePhoto = () => {
-    if (videoRef.current) {
-      const imageUrl = capturePhoto(videoRef.current, facingMode, stopCamera);
-      setIsCapturing(false);
-
-      if (imageUrl) {
-        onPhotoCapture(imageUrl);
-      }
-    }
-  };
+  const { isCapturing, videoRef, canvasRef, facingMode, switchCamera, handleCapturePhoto } =
+    useCameraCapture({
+      onPhotoCapture,
+      onError,
+      onDebug,
+    });
 
   return (
     <div className={styles.cameraContainer}>
       <video
         ref={videoRef}
-        className={`${styles.videoPreview} ${facingMode === 'user' ? styles.mirror : ''} ${isCapturing ? styles.active : styles.hidden}`}
+        className={`${styles.videoPreview} ${facingMode === 'user' ? styles.mirror : ''} ${
+          isCapturing ? styles.active : styles.hidden
+        }`}
         autoPlay
         playsInline
         muted

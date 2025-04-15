@@ -1,58 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Camera from './components/Camera';
 import ImagePreview from './components/ImagePreview';
 import PermissionRequest from './components/PermissionRequest';
 import AppInfo from './components/AppInfo';
-import useCamera from './hooks/useCamera';
-import usePhotoCapture from './hooks/usePhotoCapture';
+import useCameraApp from './hooks/useCameraApp';
 
 export default function Home() {
-  const [isClient, setIsClient] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<string | null>(null);
-  const [isCapturing, setIsCapturing] = useState(false);
-  const [localCapturedImage, setLocalCapturedImage] = useState<string | null>(null);
-
-  // Set client state when component loads
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Initialize camera hook with debug handler
-  const { hasPermission, isLoading, errorMessage, requestCameraPermission, stopCamera } = useCamera(
-    {
-      onDebug: setDebugInfo,
-    }
-  );
-
-  // Initialize photo capture hook
-  const { capturedImage, downloadPhoto, resetPhoto } = usePhotoCapture({
-    onDebug: setDebugInfo,
-  });
-
-  // When permission changes, update capturing state
-  useEffect(() => {
-    if (hasPermission === true && !isLoading) {
-      setIsCapturing(true);
-    } else {
-      setIsCapturing(false);
-    }
-  }, [hasPermission, isLoading]);
-
-  // Handle retake action
-  const handleRetake = () => {
-    setLocalCapturedImage(null);
-    resetPhoto();
-    requestCameraPermission();
-  };
-
-  // Handle photo capture
-  const handlePhotoCapture = (imageUrl: string) => {
-    setIsCapturing(false);
-    setLocalCapturedImage(imageUrl);
-  };
+  const {
+    isClient,
+    debugInfo,
+    isCapturing,
+    localCapturedImage,
+    hasPermission,
+    isLoading,
+    errorMessage,
+    requestCameraPermission,
+    handleRetake,
+    handlePhotoCapture,
+    downloadPhoto,
+    setDebugInfo,
+  } = useCameraApp();
 
   return (
     <main className={styles.main}>
