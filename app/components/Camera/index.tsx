@@ -24,6 +24,7 @@ const Camera: React.FC<CameraProps> = ({ onPhotoCapture, onError, onDebug }) => 
         className={`${styles.videoPreview} ${facingMode === 'user' ? styles.mirror : ''} ${
           isCapturing ? styles.active : styles.hidden
         }`}
+        style={{ filter: 'contrast(140%) brightness(90%) saturate(130%)' }}
         autoPlay
         playsInline
         muted
