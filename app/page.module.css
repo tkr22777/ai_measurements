@@ -76,11 +76,11 @@
     min-height: 100vh;
     justify-content: flex-start;
   }
-  
+
   .main {
     padding: 0;
   }
-  
+
   .title {
     margin-top: 0.5rem;
   }
@@ -90,19 +90,19 @@
   .main {
     background-color: #000;
   }
-  
+
   .container {
     background-color: #111;
   }
-  
+
   .title {
     color: #f0f0f0;
   }
-  
+
   .loadingContainer p {
     color: #ccc;
   }
-  
+
   .spinner {
     border-color: rgba(0, 112, 243, 0.2);
     border-left-color: #0070f3;
@@ -188,8 +188,8 @@
   .infoButton {
     background-color: #5649c0;
   }
-  
+
   .infoButton:hover {
     background-color: #4a3db3;
   }
-} 
+}

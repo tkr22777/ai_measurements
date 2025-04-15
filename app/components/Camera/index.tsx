@@ -12,7 +12,7 @@ interface CameraProps {
 
 const Camera: React.FC<CameraProps> = ({ onPhotoCapture, onError, onDebug }) => {
   const [isCapturing, setIsCapturing] = useState(false);
-  
+
   // Initialize camera hook
   const {
     videoRef,
@@ -22,22 +22,18 @@ const Camera: React.FC<CameraProps> = ({ onPhotoCapture, onError, onDebug }) => 
     facingMode,
     requestCameraPermission,
     switchCamera,
-    stopCamera
+    stopCamera,
   } = useCamera({
     onError,
-    onDebug
+    onDebug,
   });
-  
+
   // Initialize photo capture hook
-  const {
-    canvasRef,
-    capturedImage,
-    capturePhoto
-  } = usePhotoCapture({
+  const { canvasRef, capturedImage, capturePhoto } = usePhotoCapture({
     onError,
-    onDebug
+    onDebug,
   });
-  
+
   // When camera is ready, set capturing state
   useEffect(() => {
     if (hasPermission === true && !isLoading) {
@@ -46,39 +42,34 @@ const Camera: React.FC<CameraProps> = ({ onPhotoCapture, onError, onDebug }) => 
       setIsCapturing(false);
     }
   }, [hasPermission, isLoading]);
-  
+
   // Handle photo capture
   const handleCapturePhoto = () => {
     if (videoRef.current) {
       const imageUrl = capturePhoto(videoRef.current, facingMode, stopCamera);
       setIsCapturing(false);
-      
+
       if (imageUrl) {
         onPhotoCapture(imageUrl);
       }
     }
   };
-  
+
   return (
     <div className={styles.cameraContainer}>
-      <video 
-        ref={videoRef} 
+      <video
+        ref={videoRef}
         className={`${styles.videoPreview} ${facingMode === 'user' ? styles.mirror : ''} ${isCapturing ? styles.active : styles.hidden}`}
-        autoPlay 
-        playsInline 
+        autoPlay
+        playsInline
         muted
       />
-      
-      {isCapturing && (
-        <CameraControls 
-          onCapture={handleCapturePhoto}
-          onSwitch={switchCamera}
-        />
-      )}
-      
+
+      {isCapturing && <CameraControls onCapture={handleCapturePhoto} onSwitch={switchCamera} />}
+
       <canvas ref={canvasRef} style={{ display: 'none' }} />
     </div>
   );
 };
 
-export default Camera; 
+export default Camera;

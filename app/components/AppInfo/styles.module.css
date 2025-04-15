@@ -1,0 +1,40 @@
+.appInfo {
+  margin: 2rem 0;
+  width: 100%;
+}
+
+.title {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+  text-align: center;
+}
+
+.infoCard {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.description {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+@media (prefers-color-scheme: dark) {
+  .title {
+    color: #f0f0f0;
+  }
+
+  .infoCard {
+    background-color: #222;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .description {
+    color: #ddd;
+  }
+}

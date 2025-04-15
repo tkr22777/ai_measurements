@@ -11,12 +11,12 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Camera'
+    title: 'Camera',
   },
   icons: {
     icon: '/icons/favicon.svg',
-    apple: '/icons/favicon.svg'
-  }
+    apple: '/icons/favicon.svg',
+  },
 };
 
 export const viewport: Viewport = {
@@ -24,14 +24,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#0070f3'
+  themeColor: '#0070f3',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -41,4 +37,4 @@ export default function RootLayout({
       <body className={inter.className}>{children}</body>
     </html>
   );
-} 
+}

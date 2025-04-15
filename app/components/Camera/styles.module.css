@@ -115,17 +115,17 @@
     max-height: 60vh;
     width: 100%;
   }
-  
+
   .captureButton {
     width: 60px;
     height: 60px;
   }
-  
+
   .captureButton::after {
     width: 52px;
     height: 52px;
   }
-  
+
   .switchButton {
     bottom: 20px;
     right: 25px;
@@ -134,4 +134,4 @@
   .controls {
     bottom: 30px;
   }
-} 
+}

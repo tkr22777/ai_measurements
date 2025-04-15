@@ -14,7 +14,7 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
   hasPermission,
   errorMessage,
   debugInfo,
-  onRequest
+  onRequest,
 }) => {
   if (isLoading) {
     return (
@@ -22,10 +22,7 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
         <div className={styles.spinner}></div>
         <p>Accessing camera...</p>
         {debugInfo && <p className={styles.debugInfo}>{debugInfo}</p>}
-        <button 
-          className={styles.button}
-          onClick={onRequest}
-        >
+        <button className={styles.button} onClick={onRequest}>
           Retry Camera Access
         </button>
       </div>
@@ -36,10 +33,7 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
     return (
       <div className={styles.permissionRequest}>
         <p>This app needs access to your camera to take photos.</p>
-        <button 
-          className={styles.button}
-          onClick={onRequest}
-        >
+        <button className={styles.button} onClick={onRequest}>
           Allow Camera Access
         </button>
         {debugInfo && <p className={styles.debugInfo}>{debugInfo}</p>}
@@ -50,11 +44,10 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
   if (hasPermission === false) {
     return (
       <div className={styles.permissionDenied}>
-        <p>{errorMessage || 'Camera access was denied. Please grant permission to use this feature.'}</p>
-        <button 
-          className={styles.button} 
-          onClick={onRequest}
-        >
+        <p>
+          {errorMessage || 'Camera access was denied. Please grant permission to use this feature.'}
+        </p>
+        <button className={styles.button} onClick={onRequest}>
           Try Again
         </button>
         {debugInfo && <p className={styles.debugInfo}>{debugInfo}</p>}
@@ -65,4 +58,4 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
   return null;
 };
 
-export default PermissionRequest; 
+export default PermissionRequest;

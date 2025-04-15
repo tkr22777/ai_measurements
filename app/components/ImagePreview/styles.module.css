@@ -60,7 +60,7 @@
     border-radius: 0;
     max-height: 60vh;
   }
-  
+
   .button {
     padding: 0.7rem 1.5rem;
     width: auto;
@@ -73,20 +73,20 @@
   .imagePreview {
     border: 1px solid #333;
   }
-  
+
   .button {
     background-color: #0070f3;
   }
-  
+
   .button:hover {
     background-color: #0060df;
   }
-  
+
   .primaryButton {
     background-color: #0ab14b;
   }
-  
+
   .primaryButton:hover {
     background-color: #09a142;
   }
-} 
+}

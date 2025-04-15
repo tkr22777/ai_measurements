@@ -7,7 +7,7 @@ This is a mobile-friendly [Next.js](https://nextjs.org/) application that reques
 - Request camera permission with clear error feedback
 - Mobile-friendly responsive design with PWA support
 - Live camera preview with fullscreen experience
-- Capture high-quality photos 
+- Capture high-quality photos
 - Download captured photos directly to your device
 - Loading indicators for better UX
 - Responsive UI for all device sizes

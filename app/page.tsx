@@ -14,32 +14,24 @@ export default function Home() {
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [localCapturedImage, setLocalCapturedImage] = useState<string | null>(null);
-  
+
   // Set client state when component loads
   useEffect(() => {
     setIsClient(true);
   }, []);
-  
+
   // Initialize camera hook with debug handler
-  const {
-    hasPermission,
-    isLoading,
-    errorMessage,
-    requestCameraPermission,
-    stopCamera
-  } = useCamera({
-    onDebug: setDebugInfo,
-  });
-  
+  const { hasPermission, isLoading, errorMessage, requestCameraPermission, stopCamera } = useCamera(
+    {
+      onDebug: setDebugInfo,
+    }
+  );
+
   // Initialize photo capture hook
-  const {
-    capturedImage,
-    downloadPhoto,
-    resetPhoto
-  } = usePhotoCapture({
+  const { capturedImage, downloadPhoto, resetPhoto } = usePhotoCapture({
     onDebug: setDebugInfo,
   });
-  
+
   // When permission changes, update capturing state
   useEffect(() => {
     if (hasPermission === true && !isLoading) {
@@ -48,14 +40,14 @@ export default function Home() {
       setIsCapturing(false);
     }
   }, [hasPermission, isLoading]);
-  
+
   // Handle retake action
   const handleRetake = () => {
     setLocalCapturedImage(null);
     resetPhoto();
     requestCameraPermission();
   };
-  
+
   // Handle photo capture
   const handlePhotoCapture = (imageUrl: string) => {
     setIsCapturing(false);
@@ -66,7 +58,7 @@ export default function Home() {
     <main className={styles.main}>
       <div className={styles.container}>
         <h1 className={styles.title}>Mobile Camera</h1>
-        
+
         {!isClient ? (
           <div className={styles.loadingContainer}>
             <div className={styles.spinner}></div>
@@ -81,10 +73,7 @@ export default function Home() {
             onRequest={requestCameraPermission}
           />
         ) : isCapturing ? (
-          <Camera 
-            onPhotoCapture={handlePhotoCapture}
-            onDebug={setDebugInfo}
-          />
+          <Camera onPhotoCapture={handlePhotoCapture} onDebug={setDebugInfo} />
         ) : localCapturedImage ? (
           <ImagePreview
             imageUrl={localCapturedImage}
@@ -92,9 +81,9 @@ export default function Home() {
             onDownload={downloadPhoto}
           />
         ) : null}
-        
+
         <AppInfo />
       </div>
     </main>
   );
-} 
+}

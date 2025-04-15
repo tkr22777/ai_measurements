@@ -10,22 +10,12 @@ interface ImagePreviewProps {
 const ImagePreview: React.FC<ImagePreviewProps> = ({ imageUrl, onRetake, onDownload }) => {
   return (
     <div className={styles.imagePreviewContainer}>
-      <img 
-        src={imageUrl} 
-        alt="Captured" 
-        className={styles.imagePreview} 
-      />
+      <img src={imageUrl} alt="Captured" className={styles.imagePreview} />
       <div className={styles.buttonGroup}>
-        <button 
-          className={styles.button} 
-          onClick={onRetake}
-        >
+        <button className={styles.button} onClick={onRetake}>
           Retake
         </button>
-        <button 
-          className={`${styles.button} ${styles.primaryButton}`}
-          onClick={onDownload}
-        >
+        <button className={`${styles.button} ${styles.primaryButton}`} onClick={onDownload}>
           Download
         </button>
       </div>
@@ -33,4 +23,4 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({ imageUrl, onRetake, onDownl
   );
 };
 
-export default ImagePreview; 
+export default ImagePreview;
