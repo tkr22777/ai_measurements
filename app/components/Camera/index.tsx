@@ -48,24 +48,12 @@ const Camera: React.FC<CameraProps> = ({ onPhotoCapture, onError, onDebug }) => 
   }, [hasPermission, isLoading]);
   
   // Handle photo capture
-  const handleCapturePhoto = async () => {
+  const handleCapturePhoto = () => {
     if (videoRef.current) {
       const imageUrl = capturePhoto(videoRef.current, facingMode, stopCamera);
       setIsCapturing(false);
       
       if (imageUrl) {
-        // Increment the photo counter
-        try {
-          await fetch('/api/db?key=photoCount', {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-        } catch (error) {
-          console.error('Error incrementing photo counter:', error);
-        }
-        
         onPhotoCapture(imageUrl);
       }
     }

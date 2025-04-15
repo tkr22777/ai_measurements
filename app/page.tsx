@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Camera from './components/Camera';
 import ImagePreview from './components/ImagePreview';
@@ -18,7 +18,6 @@ export default function Home() {
   // Set client state when component loads
   useEffect(() => {
     setIsClient(true);
-    // No need to create AppInfo component in ref
   }, []);
   
   // Initialize camera hook with debug handler
