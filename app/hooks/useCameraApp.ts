@@ -1,57 +1,68 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import useCamera from './useCamera';
 import usePhotoCapture from './usePhotoCapture';
 
 interface UseCameraAppReturn {
   isClient: boolean;
-  debugInfo: string | null;
   isCapturing: boolean;
   localCapturedImage: string | null;
   hasPermission: boolean | null;
   isLoading: boolean;
-  errorMessage: string | null;
   requestCameraPermission: () => void;
   stopCamera: () => void;
-  downloadPhoto: () => void;
+  uploadToServer: () => void;
   handleRetake: () => void;
   handlePhotoCapture: (imageUrl: string) => void;
-  setDebugInfo: (message: string | null) => void;
 }
 
 export default function useCameraApp(): UseCameraAppReturn {
   const [isClient, setIsClient] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [localCapturedImage, setLocalCapturedImage] = useState<string | null>(null);
 
   // Set client state when component loads
   useEffect(() => {
     setIsClient(true);
+    console.log('Camera app initialized on client');
   }, []);
 
-  // Initialize camera hook with debug handler
-  const { hasPermission, isLoading, errorMessage, requestCameraPermission, stopCamera } = useCamera(
-    {
-      onDebug: setDebugInfo,
-    }
-  );
+  // Initialize camera hook
+  const { hasPermission, isLoading, requestCameraPermission, stopCamera } = useCamera();
 
   // Initialize photo capture hook
-  const { downloadPhoto, resetPhoto } = usePhotoCapture({
-    onDebug: setDebugInfo,
-  });
+  const { capturePhoto, resetPhoto } = usePhotoCapture();
+
+  // Upload functionality is centralized here
+  // This is the only implementation of uploadToServer in the app
+  const uploadToServer = useCallback(() => {
+    if (!localCapturedImage) {
+      console.log('No image available to upload');
+      return;
+    }
+
+    // This would be where you'd implement the actual server upload
+    console.log('Uploading photo to server...');
+
+    // For demonstration purposes
+    setTimeout(() => {
+      console.log('Upload complete!');
+    }, 500);
+  }, [localCapturedImage]);
 
   // When permission changes, update capturing state
   useEffect(() => {
     if (hasPermission === true && !isLoading) {
       setIsCapturing(true);
-    } else {
+      console.log('Camera permission granted, ready to capture');
+    } else if (hasPermission === false) {
       setIsCapturing(false);
+      console.log('Camera permission denied');
     }
   }, [hasPermission, isLoading]);
 
   // Handle retake action
   const handleRetake = () => {
+    console.log('Retaking photo');
     setLocalCapturedImage(null);
     resetPhoto();
     requestCameraPermission();
@@ -59,23 +70,21 @@ export default function useCameraApp(): UseCameraAppReturn {
 
   // Handle photo capture
   const handlePhotoCapture = (imageUrl: string) => {
+    console.log('Photo captured successfully');
     setIsCapturing(false);
     setLocalCapturedImage(imageUrl);
   };
 
   return {
     isClient,
-    debugInfo,
     isCapturing,
     localCapturedImage,
     hasPermission,
     isLoading,
-    errorMessage,
     requestCameraPermission,
     stopCamera,
-    downloadPhoto,
+    uploadToServer,
     handleRetake,
     handlePhotoCapture,
-    setDebugInfo,
   };
 }

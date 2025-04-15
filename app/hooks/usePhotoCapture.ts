@@ -1,10 +1,7 @@
 import { useState, useRef } from 'react';
 import { FilterConfig } from '../components/Camera/filterConfig';
 
-interface UsePhotoCaptureProps {
-  onError?: (message: string) => void;
-  onDebug?: (message: string) => void;
-}
+interface UsePhotoCaptureProps {}
 
 interface UsePhotoCaptureReturn {
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -15,21 +12,12 @@ interface UsePhotoCaptureReturn {
     stopStream?: () => void,
     filterConfig?: FilterConfig
   ) => string | null;
-  downloadPhoto: () => void;
   resetPhoto: () => void;
 }
 
-export default function usePhotoCapture({
-  onError,
-  onDebug,
-}: UsePhotoCaptureProps = {}): UsePhotoCaptureReturn {
+export default function usePhotoCapture({}: UsePhotoCaptureProps = {}): UsePhotoCaptureReturn {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Log debug messages if provided
-  const logDebug = (message: string) => {
-    if (onDebug) onDebug(message);
-  };
 
   const capturePhoto = (
     video: HTMLVideoElement,
@@ -86,14 +74,10 @@ export default function usePhotoCapture({
         }
       } catch (err) {
         const errorMsg = `Error capturing photo: ${err instanceof Error ? err.message : String(err)}`;
-        logDebug(errorMsg);
         console.error(errorMsg);
-        if (onError) onError(errorMsg);
       }
     } else {
-      const errorMsg = 'Cannot capture photo: Canvas element not available';
-      logDebug(errorMsg);
-      if (onError) onError(errorMsg);
+      console.error('Cannot capture photo: Canvas element not available');
     }
 
     return null;
@@ -154,18 +138,6 @@ export default function usePhotoCapture({
     }
   };
 
-  const downloadPhoto = () => {
-    if (typeof window === 'undefined' || !capturedImage) return;
-
-    // Create a temporary link for download
-    const link = document.createElement('a');
-    link.href = capturedImage;
-    link.download = `photo_${new Date().toISOString().replace(/:/g, '-')}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   const resetPhoto = () => {
     setCapturedImage(null);
   };
@@ -174,7 +146,6 @@ export default function usePhotoCapture({
     canvasRef,
     capturedImage,
     capturePhoto,
-    downloadPhoto,
     resetPhoto,
   };
 }

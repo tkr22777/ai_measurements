@@ -4,16 +4,12 @@ import styles from './styles.module.css';
 interface PermissionRequestProps {
   isLoading: boolean;
   hasPermission: boolean | null;
-  errorMessage: string | null;
-  debugInfo: string | null;
   onRequest: () => void;
 }
 
 const PermissionRequest: React.FC<PermissionRequestProps> = ({
   isLoading,
   hasPermission,
-  errorMessage,
-  debugInfo,
   onRequest,
 }) => {
   if (isLoading) {
@@ -21,7 +17,6 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
       <div className={styles.loadingContainer}>
         <div className={styles.spinner}></div>
         <p>Accessing camera...</p>
-        {debugInfo && <p className={styles.debugInfo}>{debugInfo}</p>}
         <button className={styles.button} onClick={onRequest}>
           Retry Camera Access
         </button>
@@ -36,7 +31,6 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
         <button className={styles.button} onClick={onRequest}>
           Allow Camera Access
         </button>
-        {debugInfo && <p className={styles.debugInfo}>{debugInfo}</p>}
       </div>
     );
   }
@@ -44,13 +38,10 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
   if (hasPermission === false) {
     return (
       <div className={styles.permissionDenied}>
-        <p>
-          {errorMessage || 'Camera access was denied. Please grant permission to use this feature.'}
-        </p>
+        <p>Camera access was denied. Please grant permission to use this feature.</p>
         <button className={styles.button} onClick={onRequest}>
           Try Again
         </button>
-        {debugInfo && <p className={styles.debugInfo}>{debugInfo}</p>}
       </div>
     );
   }

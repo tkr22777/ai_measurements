@@ -7,11 +7,9 @@ import useCameraCapture from '../../hooks/useCameraCapture';
 
 interface CameraProps {
   onPhotoCapture: (imageUrl: string) => void;
-  onError?: (message: string) => void;
-  onDebug?: (message: string) => void;
 }
 
-const Camera: React.FC<CameraProps> = ({ onPhotoCapture, onError, onDebug }) => {
+const Camera: React.FC<CameraProps> = ({ onPhotoCapture }) => {
   const {
     isCapturing,
     videoRef,
@@ -22,8 +20,6 @@ const Camera: React.FC<CameraProps> = ({ onPhotoCapture, onError, onDebug }) => 
     filterCssValue,
   } = useCameraCapture({
     onPhotoCapture,
-    onError,
-    onDebug,
   });
 
   return (

@@ -4,10 +4,10 @@ import styles from './styles.module.css';
 interface ImagePreviewProps {
   imageUrl: string;
   onRetake: () => void;
-  onDownload: () => void;
+  onUpload: () => void;
 }
 
-const ImagePreview: React.FC<ImagePreviewProps> = ({ imageUrl, onRetake, onDownload }) => {
+const ImagePreview: React.FC<ImagePreviewProps> = ({ imageUrl, onRetake, onUpload }) => {
   return (
     <div className={styles.imagePreviewContainer}>
       <img src={imageUrl} alt="Captured" className={styles.imagePreview} />
@@ -15,8 +15,8 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({ imageUrl, onRetake, onDownl
         <button className={styles.button} onClick={onRetake}>
           Retake
         </button>
-        <button className={`${styles.button} ${styles.primaryButton}`} onClick={onDownload}>
-          Download
+        <button className={`${styles.button} ${styles.primaryButton}`} onClick={onUpload}>
+          Upload to Server
         </button>
       </div>
     </div>

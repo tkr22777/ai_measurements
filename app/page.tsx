@@ -10,17 +10,14 @@ import useCameraApp from './hooks/useCameraApp';
 export default function Home() {
   const {
     isClient,
-    debugInfo,
     isCapturing,
     localCapturedImage,
     hasPermission,
     isLoading,
-    errorMessage,
     requestCameraPermission,
     handleRetake,
     handlePhotoCapture,
-    downloadPhoto,
-    setDebugInfo,
+    uploadToServer,
   } = useCameraApp();
 
   return (
@@ -37,21 +34,23 @@ export default function Home() {
           <PermissionRequest
             isLoading={isLoading}
             hasPermission={hasPermission}
-            errorMessage={errorMessage}
-            debugInfo={debugInfo}
             onRequest={requestCameraPermission}
           />
         ) : isCapturing ? (
-          <Camera onPhotoCapture={handlePhotoCapture} onDebug={setDebugInfo} />
+          <Camera onPhotoCapture={handlePhotoCapture} />
         ) : localCapturedImage ? (
           <ImagePreview
             imageUrl={localCapturedImage}
             onRetake={handleRetake}
-            onDownload={downloadPhoto}
+            onUpload={uploadToServer}
           />
         ) : null}
 
         <AppInfo />
+
+        <div style={{ fontSize: '12px', color: '#666', marginTop: '20px', textAlign: 'center' }}>
+          {isClient ? 'Client initialized' : 'Loading...'}
+        </div>
       </div>
     </main>
   );

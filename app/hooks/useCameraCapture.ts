@@ -5,8 +5,6 @@ import { dramaticFilter } from '../components/Camera/filterConfig';
 
 interface UseCameraCaptureProps {
   onPhotoCapture: (imageUrl: string) => void;
-  onError?: (message: string) => void;
-  onDebug?: (message: string) => void;
 }
 
 interface UseCameraCaptureReturn {
@@ -21,8 +19,6 @@ interface UseCameraCaptureReturn {
 
 export default function useCameraCapture({
   onPhotoCapture,
-  onError,
-  onDebug,
 }: UseCameraCaptureProps): UseCameraCaptureReturn {
   const [isCapturing, setIsCapturing] = useState(false);
 
@@ -30,16 +26,10 @@ export default function useCameraCapture({
   const filterCssValue = `contrast(${dramaticFilter.contrast * 100}%) brightness(${dramaticFilter.brightness * 100}%) saturate(${dramaticFilter.saturation * 100}%)`;
 
   // Initialize camera hook
-  const { videoRef, hasPermission, isLoading, facingMode, switchCamera, stopCamera } = useCamera({
-    onError,
-    onDebug,
-  });
+  const { videoRef, hasPermission, isLoading, facingMode, switchCamera, stopCamera } = useCamera();
 
   // Initialize photo capture hook
-  const { canvasRef, capturePhoto } = usePhotoCapture({
-    onError,
-    onDebug,
-  });
+  const { canvasRef, capturePhoto } = usePhotoCapture();
 
   // When camera is ready, set capturing state
   useEffect(() => {
