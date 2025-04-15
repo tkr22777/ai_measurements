@@ -4,10 +4,6 @@ import { db, initializeDb } from '@/app/utils/db';
 // Initialize the database
 initializeDb();
 
-// Track last increment time to prevent duplicate increments
-let lastIncrementTime = 0;
-const THROTTLE_INTERVAL = 3000; // 3 seconds
-
 /**
  * GET /api/db - Get all data or a specific key
  */
@@ -52,22 +48,8 @@ export async function POST(request: NextRequest) {
  * PATCH /api/db - Increment a counter value
  */
 export async function PATCH(request: NextRequest) {
-  const now = Date.now();
   const searchParams = request.nextUrl.searchParams;
   const key = searchParams.get('key') || 'visitCount';
-  
-  // Prevent rapid successive increments (throttling)
-  if (now - lastIncrementTime < THROTTLE_INTERVAL) {
-    // If a request comes in too quickly after the last one, just return the current count
-    return NextResponse.json({ 
-      key,
-      value: db.get(key) || 0,
-      throttled: true
-    });
-  }
-  
-  // Update the last increment time
-  lastIncrementTime = now;
   
   // Increment the counter for the specified key
   const currentCount = db.get(key) || 0;

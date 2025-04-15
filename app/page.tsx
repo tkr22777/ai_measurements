@@ -14,16 +14,11 @@ export default function Home() {
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [localCapturedImage, setLocalCapturedImage] = useState<string | null>(null);
-  const [showAppInfo, setShowAppInfo] = useState(false);
-  const appInfoRef = useRef<React.ReactNode>(null);
   
   // Set client state when component loads
   useEffect(() => {
     setIsClient(true);
-    // Create the AppInfo component only once
-    if (!appInfoRef.current) {
-      appInfoRef.current = <AppInfo />;
-    }
+    // No need to create AppInfo component in ref
   }, []);
   
   // Initialize camera hook with debug handler
@@ -68,22 +63,10 @@ export default function Home() {
     setLocalCapturedImage(imageUrl);
   };
 
-  // Toggle App Info visibility
-  const toggleAppInfo = () => {
-    setShowAppInfo(!showAppInfo);
-  };
-
   return (
     <main className={styles.main}>
       <div className={styles.container}>
         <h1 className={styles.title}>Mobile Camera</h1>
-        
-        <button 
-          onClick={toggleAppInfo} 
-          className={styles.infoButton}
-        >
-          {showAppInfo ? 'Hide Info' : 'Show App Info'}
-        </button>
         
         {!isClient ? (
           <div className={styles.loadingContainer}>
@@ -111,7 +94,7 @@ export default function Home() {
           />
         ) : null}
         
-        {showAppInfo && appInfoRef.current}
+        <AppInfo />
       </div>
     </main>
   );
