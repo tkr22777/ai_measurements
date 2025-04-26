@@ -1,5 +1,6 @@
 import React from 'react';
-import styles from './styles.module.css';
+// Remove CSS module import
+// import styles from './styles.module.css';
 import CameraControls from './CameraControls';
 import useCameraCapture from '../../hooks/useCameraCapture';
 
@@ -23,12 +24,12 @@ const Camera: React.FC<CameraProps> = ({ onPhotoCapture }) => {
   });
 
   return (
-    <div className={styles.cameraContainer}>
+    <div className="w-full flex flex-col items-center mb-4 relative">
       <video
         ref={videoRef}
-        className={`${styles.videoPreview} ${facingMode === 'user' ? styles.mirror : ''} ${
-          isCapturing ? styles.active : styles.hidden
-        }`}
+        className={`w-full max-h-[70vh] object-cover rounded-lg bg-black ${
+          facingMode === 'user' ? 'scale-x-[-1]' : ''
+        } ${isCapturing ? 'block' : 'hidden'}`}
         style={{ filter: filterCssValue }}
         autoPlay
         playsInline
@@ -37,7 +38,7 @@ const Camera: React.FC<CameraProps> = ({ onPhotoCapture }) => {
 
       {isCapturing && <CameraControls onCapture={handleCapturePhoto} onSwitch={switchCamera} />}
 
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <canvas ref={canvasRef} className="hidden" />
     </div>
   );
 };
