@@ -6,6 +6,7 @@ import PermissionRequest from './components/PermissionRequest';
 import AppInfo from './components/AppInfo';
 import ImageGallery from './components/ImageGallery';
 import UserIdInput from './components/UserIdInput';
+import ProcessingButton from './components/ProcessingButton';
 import useCameraApp from './hooks/useCameraApp';
 import { useUser } from './components/UserContext';
 
@@ -65,6 +66,17 @@ export default function Home() {
         ) : null}
 
         <ImageGallery />
+        <ProcessingButton
+          onSuccess={(result) => {
+            console.log('Body measurement processing successful:', result);
+            // You could also do something with the measurement data here,
+            // such as updating UI elements or triggering other actions
+          }}
+          onError={(error) => {
+            console.error('Body measurement processing error:', error);
+            // You could show a more user-friendly error or retry the operation
+          }}
+        />
         <AppInfo />
 
         <div className="text-xs text-gray-500 dark:text-gray-400 mt-5 text-center">
