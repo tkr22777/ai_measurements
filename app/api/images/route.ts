@@ -15,6 +15,7 @@ export async function GET() {
       title: blob.pathname.split('/').pop() || 'Unnamed Image',
       url: blob.url,
       thumbnailUrl: blob.url,
+      pathname: blob.pathname,
       uploadedAt: blob.uploadedAt,
     }));
 
