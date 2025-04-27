@@ -53,7 +53,14 @@ export default function ImageGallery() {
       try {
         setIsLoading(true);
         console.log('Fetching images from API...');
-        const response = await fetch(`/api/images?userId=${userId}`);
+
+        // If userId is not provided, use the showAll parameter to either show all images or none
+        const endpoint = userId
+          ? `/api/images?userId=${userId}`
+          : `/api/images?userId=&showAll=false`;
+
+        console.log(`Using API endpoint: ${endpoint}`);
+        const response = await fetch(endpoint);
 
         if (!response.ok) {
           throw new Error('Failed to fetch images');

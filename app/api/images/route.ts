@@ -6,13 +6,23 @@ export async function GET(request: Request) {
     // Get userId from the query string
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId') || '';
+    const showAllImages = searchParams.get('showAll') === 'true';
 
-    console.log(`Fetching images for userId: ${userId}`);
+    console.log(`Fetching images for userId: ${userId || 'all users'}`);
 
-    // If userId is provided, use it as a prefix filter with the images/ prefix
-    const options = userId ? { prefix: `images/${userId}/` } : { prefix: 'images/' };
+    // If userId is empty or not provided, return an empty array unless showAll is true
+    if (!userId && !showAllImages) {
+      console.log('No userId provided and showAll is false, returning empty array');
+      return NextResponse.json({ images: [] });
+    }
 
-    // List blobs, filtering by userId if provided
+    // Use userId as a prefix filter with the images/ prefix
+    // If userId is empty and showAll is true, just use the images/ prefix to get all images
+    const options = {
+      prefix: userId ? `images/${userId}/` : showAllImages ? 'images/' : `images/${userId}/`,
+    };
+
+    // List blobs, filtering by userId
     const { blobs } = await list(options);
 
     console.log(`Found ${blobs.length} total blobs for userId: ${userId || 'all users'}`);
