@@ -3,11 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useUser } from './UserContext';
 
-interface BodyMeasurementProps {
-  onSuccess?: (result: any) => void;
-  onError?: (error: Error) => void;
-}
-
+// Define the interface at the top of the file
 interface MeasurementResult {
   userId: string;
   height: number;
@@ -26,7 +22,7 @@ interface MeasurementResult {
   blobUrl?: string;
 }
 
-export default function BodyMeasurement({ onSuccess, onError }: BodyMeasurementProps) {
+export default function BodyMeasurement() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -72,6 +68,19 @@ export default function BodyMeasurement({ onSuccess, onError }: BodyMeasurementP
 
     fetchExistingResults();
   }, [userId]);
+
+  // Internal success handler
+  const handleSuccess = (data: any) => {
+    console.log('Body measurement processing successful:', data);
+    // You could also do something with the measurement data here,
+    // such as updating UI elements or triggering other actions
+  };
+
+  // Internal error handler
+  const handleError = (error: Error) => {
+    console.error('Body measurement processing error:', error);
+    // You could show a more user-friendly error or retry the operation
+  };
 
   const handleProcessing = async () => {
     try {
@@ -125,15 +134,15 @@ export default function BodyMeasurement({ onSuccess, onError }: BodyMeasurementP
         });
       }
 
-      if (onSuccess) {
-        onSuccess(data);
-      }
+      // Call internal success handler
+      handleSuccess(data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       setError(errorMessage);
 
-      if (onError && err instanceof Error) {
-        onError(err);
+      // Call internal error handler
+      if (err instanceof Error) {
+        handleError(err);
       }
     } finally {
       setIsProcessing(false);

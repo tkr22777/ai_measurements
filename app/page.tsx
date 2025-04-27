@@ -66,17 +66,7 @@ export default function Home() {
         ) : null}
 
         <ImageGallery />
-        <BodyMeasurement
-          onSuccess={(result) => {
-            console.log('Body measurement processing successful:', result);
-            // You could also do something with the measurement data here,
-            // such as updating UI elements or triggering other actions
-          }}
-          onError={(error) => {
-            console.error('Body measurement processing error:', error);
-            // You could show a more user-friendly error or retry the operation
-          }}
-        />
+        <BodyMeasurement />
         <AppInfo />
 
         <div className="text-xs text-gray-500 dark:text-gray-400 mt-5 text-center">
