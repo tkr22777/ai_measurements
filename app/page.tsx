@@ -6,7 +6,7 @@ import PermissionRequest from './components/PermissionRequest';
 import AppInfo from './components/AppInfo';
 import ImageGallery from './components/ImageGallery';
 import UserIdInput from './components/UserIdInput';
-import ProcessingButton from './components/ProcessingButton';
+import BodyMeasurement from './components/BodyMeasurement';
 import useCameraApp from './hooks/useCameraApp';
 import { useUser } from './components/UserContext';
 
@@ -66,7 +66,7 @@ export default function Home() {
         ) : null}
 
         <ImageGallery />
-        <ProcessingButton
+        <BodyMeasurement
           onSuccess={(result) => {
             console.log('Body measurement processing successful:', result);
             // You could also do something with the measurement data here,
