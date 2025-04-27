@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import useCamera from './useCamera';
 import usePhotoCapture from './usePhotoCapture';
+import { dataURLtoFile, generateFilename } from '../utils/imageUtils';
+import { galleryEvents } from '../components/ImageGallery';
 
 interface UseCameraAppReturn {
   isClient: boolean;
@@ -8,9 +10,12 @@ interface UseCameraAppReturn {
   localCapturedImage: string | null;
   hasPermission: boolean | null;
   isLoading: boolean;
+  isUploading: boolean;
+  uploadError: string | null;
+  uploadedImageUrl: string | null;
   requestCameraPermission: () => void;
   stopCamera: () => void;
-  uploadToServer: () => void;
+  uploadToServer: () => Promise<void>;
   handleRetake: () => void;
   handlePhotoCapture: (imageUrl: string) => void;
 }
@@ -19,6 +24,9 @@ export default function useCameraApp(): UseCameraAppReturn {
   const [isClient, setIsClient] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [localCapturedImage, setLocalCapturedImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
 
   // Set client state when component loads
   useEffect(() => {
@@ -33,20 +41,48 @@ export default function useCameraApp(): UseCameraAppReturn {
   const { capturePhoto, resetPhoto } = usePhotoCapture();
 
   // Upload functionality is centralized here
-  // This is the only implementation of uploadToServer in the app
-  const uploadToServer = useCallback(() => {
+  const uploadToServer = useCallback(async () => {
     if (!localCapturedImage) {
       console.log('No image available to upload');
       return;
     }
 
-    // This would be where you'd implement the actual server upload
-    console.log('Uploading photo to server...');
+    try {
+      setIsUploading(true);
+      setUploadError(null);
+      console.log('Preparing to upload photo to Vercel Blob storage...');
 
-    // For demonstration purposes
-    setTimeout(() => {
-      console.log('Upload complete!');
-    }, 500);
+      // Convert data URL to File
+      const filename = generateFilename();
+      const file = dataURLtoFile(localCapturedImage, filename);
+
+      // Create form data
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Upload to our API route
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Upload failed');
+      }
+
+      console.log('Upload complete!', result);
+      setUploadedImageUrl(result.url);
+
+      // Trigger gallery refresh
+      galleryEvents.triggerRefresh();
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setUploadError(error instanceof Error ? error.message : 'Upload failed');
+    } finally {
+      setIsUploading(false);
+    }
   }, [localCapturedImage]);
 
   // When permission changes, update capturing state
@@ -64,6 +100,8 @@ export default function useCameraApp(): UseCameraAppReturn {
   const handleRetake = () => {
     console.log('Retaking photo');
     setLocalCapturedImage(null);
+    setUploadedImageUrl(null);
+    setUploadError(null);
     resetPhoto();
     requestCameraPermission();
   };
@@ -81,6 +119,9 @@ export default function useCameraApp(): UseCameraAppReturn {
     localCapturedImage,
     hasPermission,
     isLoading,
+    isUploading,
+    uploadError,
+    uploadedImageUrl,
     requestCameraPermission,
     stopCamera,
     uploadToServer,

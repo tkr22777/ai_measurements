@@ -4,6 +4,7 @@ import Camera from './components/Camera';
 import ImagePreview from './components/ImagePreview';
 import PermissionRequest from './components/PermissionRequest';
 import AppInfo from './components/AppInfo';
+import ImageGallery from './components/ImageGallery';
 import useCameraApp from './hooks/useCameraApp';
 
 export default function Home() {
@@ -13,6 +14,9 @@ export default function Home() {
     localCapturedImage,
     hasPermission,
     isLoading,
+    isUploading,
+    uploadError,
+    uploadedImageUrl,
     requestCameraPermission,
     handleRetake,
     handlePhotoCapture,
@@ -44,9 +48,13 @@ export default function Home() {
             imageUrl={localCapturedImage}
             onRetake={handleRetake}
             onUpload={uploadToServer}
+            isUploading={isUploading}
+            uploadError={uploadError}
+            uploadedImageUrl={uploadedImageUrl}
           />
         ) : null}
 
+        <ImageGallery />
         <AppInfo />
 
         <div className="text-xs text-gray-500 dark:text-gray-400 mt-5 text-center">

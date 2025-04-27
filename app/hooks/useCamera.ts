@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface UseCameraProps {}
 
@@ -41,7 +41,7 @@ export default function useCamera({}: UseCameraProps = {}): UseCameraReturn {
     }
   };
 
-  const requestCameraPermission = async () => {
+  const requestCameraPermission = useCallback(async () => {
     if (!isClient) {
       console.log('Cannot access camera during server rendering');
       return;
@@ -143,7 +143,7 @@ export default function useCamera({}: UseCameraProps = {}): UseCameraReturn {
         console.error(`Unknown error: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
-  };
+  }, [isClient, isMounted, facingMode]);
 
   const switchCamera = () => {
     setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'));
@@ -154,7 +154,7 @@ export default function useCamera({}: UseCameraProps = {}): UseCameraReturn {
     if (isClient && isMounted && hasPermission !== false) {
       requestCameraPermission();
     }
-  }, [facingMode, isMounted, isClient]);
+  }, [facingMode, isMounted, isClient, hasPermission, requestCameraPermission]);
 
   return {
     videoRef,
