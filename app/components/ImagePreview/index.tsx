@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import '../../styles/ImageUploader.css'; // Import the styles for user-info-banner
 
 interface ImagePreviewProps {
   imageUrl: string;
@@ -8,6 +9,8 @@ interface ImagePreviewProps {
   isUploading?: boolean;
   uploadError?: string | null;
   uploadedImageUrl?: string | null;
+  userId?: string;
+  onUserChange?: (userId: string) => void;
 }
 
 const ImagePreview: React.FC<ImagePreviewProps> = ({
@@ -17,6 +20,8 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   isUploading = false,
   uploadError = null,
   uploadedImageUrl = null,
+  userId = 'user1',
+  onUserChange,
 }) => {
   return (
     <div className="w-full flex flex-col items-center">
@@ -25,6 +30,15 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
         alt="Captured"
         className="w-full max-h-[70vh] object-contain rounded-lg mb-4 shadow-sm"
       />
+
+      {/* User info banner */}
+      {!uploadedImageUrl && (
+        <div className="user-info-banner mb-4 w-full">
+          <p>
+            Uploading as: <span className="user-id">{userId}</span>
+          </p>
+        </div>
+      )}
 
       {uploadedImageUrl ? (
         <div className="mt-2 w-full text-center">

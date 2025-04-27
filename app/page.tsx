@@ -5,7 +5,9 @@ import ImagePreview from './components/ImagePreview';
 import PermissionRequest from './components/PermissionRequest';
 import AppInfo from './components/AppInfo';
 import ImageGallery from './components/ImageGallery';
+import UserIdInput from './components/UserIdInput';
 import useCameraApp from './hooks/useCameraApp';
+import { useUser } from './components/UserContext';
 
 export default function Home() {
   const {
@@ -23,12 +25,18 @@ export default function Home() {
     uploadToServer,
   } = useCameraApp();
 
+  // Use the shared user context instead of component-specific state
+  const { userId, setUserId } = useUser();
+
   return (
     <main className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-100 dark:bg-black">
       <div className="w-full max-w-lg flex flex-col items-center bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 my-4 overflow-hidden md:rounded-lg md:shadow-md md:p-6 sm:rounded-none sm:shadow-none sm:p-4 sm:m-0 sm:min-h-screen sm:justify-start">
         <h1 className="text-2xl font-semibold mb-6 text-center text-gray-800 dark:text-gray-100 sm:mt-2">
           Mobile Camera
         </h1>
+
+        {/* User ID Input Form */}
+        <UserIdInput />
 
         {!isClient ? (
           <div className="flex flex-col items-center justify-center text-center p-4 gap-4 w-full min-h-[200px]">
@@ -51,6 +59,8 @@ export default function Home() {
             isUploading={isUploading}
             uploadError={uploadError}
             uploadedImageUrl={uploadedImageUrl}
+            userId={userId}
+            onUserChange={setUserId}
           />
         ) : null}
 

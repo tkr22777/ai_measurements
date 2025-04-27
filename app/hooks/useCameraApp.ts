@@ -3,6 +3,7 @@ import useCamera from './useCamera';
 import usePhotoCapture from './usePhotoCapture';
 import { dataURLtoFile, generateFilename } from '../utils/imageUtils';
 import { galleryEvents } from '../components/ImageGallery';
+import { useUser } from '../components/UserContext';
 
 interface UseCameraAppReturn {
   isClient: boolean;
@@ -27,6 +28,9 @@ export default function useCameraApp(): UseCameraAppReturn {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+
+  // Get userId from shared context
+  const { userId } = useUser();
 
   // Set client state when component loads
   useEffect(() => {
@@ -59,6 +63,8 @@ export default function useCameraApp(): UseCameraAppReturn {
       // Create form data
       const formData = new FormData();
       formData.append('file', file);
+      // Include userId in the form data
+      formData.append('userId', userId);
 
       // Upload to our API route
       const response = await fetch('/api/upload', {
@@ -83,7 +89,7 @@ export default function useCameraApp(): UseCameraAppReturn {
     } finally {
       setIsUploading(false);
     }
-  }, [localCapturedImage]);
+  }, [localCapturedImage, userId]);
 
   // When permission changes, update capturing state
   useEffect(() => {

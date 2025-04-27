@@ -5,17 +5,21 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
+    const userId = (formData.get('userId') as string) || 'unknown';
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    console.log(`Processing upload for file: ${file.name}, size: ${file.size} bytes`);
+    console.log(
+      `Processing upload for file: ${file.name}, size: ${file.size} bytes, userId: ${userId}`
+    );
 
     // Create a unique filename with timestamp and random string
     const timestamp = new Date().toISOString().replace(/[-:.]/g, '');
     const random = Math.random().toString(36).substring(2, 10);
-    const filename = `${timestamp}-${random}-${file.name}`;
+    // Include userId in the path with 'images/' prefix
+    const filename = `images/${userId}/${timestamp}-${random}-${file.name}`;
 
     console.log(`Generated filename: ${filename}`);
 
@@ -32,6 +36,7 @@ export async function POST(request: Request) {
       success: true,
       url: blob.url,
       pathname: blob.pathname,
+      userId: userId,
     });
   } catch (error) {
     console.error('Error uploading to Vercel Blob:', error);

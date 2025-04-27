@@ -1,5 +1,8 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
+import { dataURLtoFile } from '../utils/imageUtils';
+import { useUser } from './UserContext';
+import '../styles/ImageGallery.css';
 
 interface ImageItem {
   id: string;
@@ -28,6 +31,9 @@ export default function ImageGallery() {
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
+  // Use the shared user context instead of component's own state
+  const { userId } = useUser();
+
   // Function to refresh the gallery
   const refreshGallery = useCallback(() => {
     setRefreshTrigger((prev) => prev + 1);
@@ -47,7 +53,7 @@ export default function ImageGallery() {
       try {
         setIsLoading(true);
         console.log('Fetching images from API...');
-        const response = await fetch('/api/images');
+        const response = await fetch(`/api/images?userId=${userId}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch images');
@@ -68,7 +74,7 @@ export default function ImageGallery() {
     }
 
     fetchImages();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, userId]);
 
   // Handle image deletion
   const handleDeleteImage = async (image: ImageItem) => {
@@ -88,6 +94,7 @@ export default function ImageGallery() {
         body: JSON.stringify({
           url: image.url,
           pathname: image.pathname,
+          userId,
         }),
       });
 
@@ -134,34 +141,19 @@ export default function ImageGallery() {
   };
 
   return (
-    <div className="w-full mb-8">
-      <h2 className="text-xl font-medium mb-4 text-gray-800 dark:text-gray-100">
-        {isLoading ? 'Loading Images...' : 'Image Gallery'}
-      </h2>
+    <div className="image-gallery-container">
+      <div className="gallery-header">
+        <h2>Image Gallery</h2>
+      </div>
 
-      {error && (
-        <div className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 p-3 rounded-md mb-4">
-          {error}
-        </div>
-      )}
+      {/* Display loading state */}
+      {isLoading && <p className="loading-message">Loading images...</p>}
 
-      {deleteError && (
-        <div className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 p-3 rounded-md mb-4">
-          <p className="font-medium">Delete failed:</p>
-          <p className="text-sm">{deleteError}</p>
-        </div>
-      )}
+      {/* Display error message if there is an error */}
+      {error && <p className="error-message">{error}</p>}
 
-      {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((placeholder) => (
-            <div
-              key={placeholder}
-              className="relative h-36 w-full rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse"
-            />
-          ))}
-        </div>
-      ) : images.length > 0 ? (
+      {/* Display images in a grid layout */}
+      {!isLoading && !error && images.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {images.map((image) => (
             <div
