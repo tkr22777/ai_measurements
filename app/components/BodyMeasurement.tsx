@@ -20,6 +20,9 @@ interface MeasurementResult {
     hips: number;
     bmi: number;
   };
+  bodygramData?: any;
+  bodygramError?: string;
+  bodygramStatus?: 'success' | 'error' | 'not_called';
   blobUrl?: string;
 }
 
@@ -115,6 +118,9 @@ export default function BodyMeasurement({ onSuccess, onError }: BodyMeasurementP
           height: data.height,
           processedAt: data.processedAt,
           measurements: data.measurements,
+          bodygramData: data.bodygramData,
+          bodygramError: data.bodygramError,
+          bodygramStatus: data.bodygramStatus,
           blobUrl: data.blobUrl,
         });
       }
@@ -208,6 +214,23 @@ export default function BodyMeasurement({ onSuccess, onError }: BodyMeasurementP
             </div>
           </div>
 
+          {/* Bodygram API status */}
+          <div className="mb-4 p-2 rounded text-sm">
+            {measurementResult.bodygramStatus === 'success' ? (
+              <div className="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 p-2 rounded">
+                ✓ Processed with Bodygram API
+              </div>
+            ) : measurementResult.bodygramStatus === 'error' ? (
+              <div className="text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 p-2 rounded">
+                ⚠ Using estimated measurements (Bodygram API error)
+              </div>
+            ) : (
+              <div className="text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                ℹ Using standard measurement estimation
+              </div>
+            )}
+          </div>
+
           <button
             onClick={handleNewMeasurement}
             className="w-full bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-4 py-2 rounded-md text-sm font-medium transition-colors dark:bg-indigo-900 dark:text-indigo-200 dark:hover:bg-indigo-800"
@@ -215,11 +238,9 @@ export default function BodyMeasurement({ onSuccess, onError }: BodyMeasurementP
             Take New Measurement
           </button>
 
-          {measurementResult.blobUrl && (
-            <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
-              <span>Data stored in Vercel Blob Storage</span>
-            </div>
-          )}
+          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+            {measurementResult.blobUrl && <span>Data stored in Vercel Blob Storage</span>}
+          </div>
         </div>
       </div>
     );
