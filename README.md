@@ -105,3 +105,57 @@ This app uses [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) for sto
 3. Vercel will automatically handle the integration between your app and Blob storage
 
 In different environments (development, preview, production), your images will be stored in separate directories automatically.
+
+# Photo Display Components
+
+This project provides several components for displaying user photos from blob storage:
+
+## Components Overview
+
+1. **PhotoSpots**: The main component used in the app for displaying front and side photos with interactive functionality to capture new photos.
+
+2. **SimpleImageDisplay**: A simplified component that uses standard HTML img tags to display front and side photos fetched from blob storage.
+
+## API Integration
+
+These components interact with:
+
+- `/api/images` - Fetches images by user ID and type (front or side)
+
+## How Images Are Stored
+
+Images are stored in Vercel Blob Storage with paths:
+
+- `images/{userId}/front.{extension}`
+- `images/{userId}/side.{extension}`
+
+## Error Handling
+
+All components include error handling for:
+
+- Missing user ID
+- Failed image loading
+- API request failures
+
+## Placeholder Images
+
+When images fail to load, a placeholder SVG image is displayed instead.
+
+## Using the SimpleImageDisplay Component
+
+The SimpleImageDisplay component is the simplest way to display photos:
+
+```jsx
+import SimpleImageDisplay from '@/app/components/SimpleImageDisplay';
+
+export default function MyPage() {
+  return (
+    <UserProvider>
+      {/* Make sure to wrap the component with UserProvider */}
+      <SimpleImageDisplay />
+    </UserProvider>
+  );
+}
+```
+
+Note that it requires a userId to be set in the UserContext to function properly.

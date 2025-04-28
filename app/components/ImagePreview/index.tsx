@@ -5,12 +5,13 @@ import '../../styles/ImageUploader.css'; // Import the styles for user-info-bann
 interface ImagePreviewProps {
   imageUrl: string;
   onRetake: () => void;
-  onUpload: () => void;
+  onUpload: (photoType: string) => Promise<string | null>;
   isUploading?: boolean;
   uploadError?: string | null;
   uploadedImageUrl?: string | null;
   userId?: string;
   onUserChange?: (userId: string) => void;
+  photoType?: 'front' | 'side';
 }
 
 const ImagePreview: React.FC<ImagePreviewProps> = ({
@@ -22,7 +23,16 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   uploadedImageUrl = null,
   userId = 'user1',
   onUserChange,
+  photoType = 'front',
 }) => {
+  const handleUpload = async () => {
+    try {
+      await onUpload(photoType);
+    } catch (error) {
+      console.error('Error in handleUpload:', error);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col items-center">
       <img
@@ -75,7 +85,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
             </button>
             <button
               className="bg-green-600 text-white border-none rounded-md py-3 px-6 text-base font-medium cursor-pointer transition-all duration-200 m-2 outline-none hover:bg-green-700 hover:translate-y-[-1px] hover:shadow-sm active:translate-y-0 active:shadow-none"
-              onClick={onUpload}
+              onClick={handleUpload}
             >
               Try Again
             </button>
@@ -95,7 +105,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
                 ? 'hover:bg-green-700 hover:translate-y-[-1px] hover:shadow-sm active:translate-y-0 active:shadow-none'
                 : 'opacity-75 cursor-not-allowed'
             }`}
-            onClick={onUpload}
+            onClick={handleUpload}
             disabled={isUploading}
           >
             {isUploading ? (

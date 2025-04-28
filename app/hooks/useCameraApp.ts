@@ -16,9 +16,11 @@ interface UseCameraAppReturn {
   uploadedImageUrl: string | null;
   requestCameraPermission: () => void;
   stopCamera: () => void;
-  uploadToServer: () => Promise<void>;
+  uploadToServer: (photoType: string) => Promise<string | null>;
   handleRetake: () => void;
   handlePhotoCapture: (imageUrl: string) => void;
+  currentPhotoType: string | null;
+  setCurrentPhotoType: (type: string | null) => void;
 }
 
 export default function useCameraApp(): UseCameraAppReturn {
@@ -28,6 +30,7 @@ export default function useCameraApp(): UseCameraAppReturn {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [currentPhotoType, setCurrentPhotoType] = useState<string | null>(null);
 
   // Get userId from shared context
   const { userId } = useUser();
@@ -45,51 +48,63 @@ export default function useCameraApp(): UseCameraAppReturn {
   const { capturePhoto, resetPhoto } = usePhotoCapture();
 
   // Upload functionality is centralized here
-  const uploadToServer = useCallback(async () => {
-    if (!localCapturedImage) {
-      console.log('No image available to upload');
-      return;
-    }
-
-    try {
-      setIsUploading(true);
-      setUploadError(null);
-      console.log('Preparing to upload photo to Vercel Blob storage...');
-
-      // Convert data URL to File
-      const filename = generateFilename();
-      const file = dataURLtoFile(localCapturedImage, filename);
-
-      // Create form data
-      const formData = new FormData();
-      formData.append('file', file);
-      // Include userId in the form data
-      formData.append('userId', userId);
-
-      // Upload to our API route
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Upload failed');
+  const uploadToServer = useCallback(
+    async (photoType: string): Promise<string | null> => {
+      if (!localCapturedImage) {
+        console.log('No image available to upload');
+        return null;
       }
 
-      console.log('Upload complete!', result);
-      setUploadedImageUrl(result.url);
+      if (!userId) {
+        setUploadError('User ID is required to upload a photo');
+        return null;
+      }
 
-      // Trigger gallery refresh
-      galleryEvents.triggerRefresh();
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      setUploadError(error instanceof Error ? error.message : 'Upload failed');
-    } finally {
-      setIsUploading(false);
-    }
-  }, [localCapturedImage, userId]);
+      if (!photoType || (photoType !== 'front' && photoType !== 'side')) {
+        setUploadError('Valid photo type (front or side) is required');
+        return null;
+      }
+
+      try {
+        setIsUploading(true);
+        setUploadError(null);
+        console.log(`Preparing to upload ${photoType} photo for user ${userId}...`);
+
+        // Convert data URL to File
+        const filename = generateFilename();
+        const file = dataURLtoFile(localCapturedImage, filename);
+
+        // Create form data
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('userId', userId);
+        formData.append('type', photoType);
+
+        // Upload to our API route
+        const response = await fetch('/api/images', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Upload failed');
+        }
+
+        console.log(`${photoType} photo uploaded successfully!`, result);
+        setUploadedImageUrl(result.imageUrl);
+        return result.imageUrl;
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        setUploadError(error instanceof Error ? error.message : 'Upload failed');
+        return null;
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [localCapturedImage, userId]
+  );
 
   // When permission changes, update capturing state
   useEffect(() => {
@@ -133,5 +148,7 @@ export default function useCameraApp(): UseCameraAppReturn {
     uploadToServer,
     handleRetake,
     handlePhotoCapture,
+    currentPhotoType,
+    setCurrentPhotoType,
   };
 }
