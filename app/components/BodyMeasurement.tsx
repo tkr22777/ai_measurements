@@ -16,6 +16,7 @@ interface MeasurementResult {
     hips: number;
     bmi: number;
   };
+  dataSource: string;
   bodygramData?: any;
   bodygramError?: string;
   bodygramStatus?: 'success' | 'error' | 'not_called';
@@ -127,6 +128,7 @@ export default function BodyMeasurement() {
           height: data.height,
           processedAt: data.processedAt,
           measurements: data.measurements,
+          dataSource: data.dataSource,
           bodygramData: data.bodygramData,
           bodygramError: data.bodygramError,
           bodygramStatus: data.bodygramStatus,
@@ -184,6 +186,13 @@ export default function BodyMeasurement() {
             </span>
           </div>
 
+          {/* Data Source Badge */}
+          {measurementResult.dataSource === 'mock/sample data' && (
+            <div className="mb-3 inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+              {measurementResult.dataSource}
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="flex flex-col">
               <span className="text-sm text-gray-500 dark:text-gray-400">Height</span>
@@ -229,9 +238,9 @@ export default function BodyMeasurement() {
               <div className="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 p-2 rounded">
                 ✓ Processed with Bodygram API
               </div>
-            ) : measurementResult.bodygramStatus === 'error' ? (
-              <div className="text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 p-2 rounded">
-                ⚠ Using estimated measurements (Bodygram API error)
+            ) : measurementResult.dataSource === 'mock/sample data' ? (
+              <div className="text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                Note: Using mock/sample data
               </div>
             ) : (
               <div className="text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-2 rounded">

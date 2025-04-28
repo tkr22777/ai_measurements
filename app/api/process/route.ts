@@ -219,6 +219,7 @@ export async function POST(request: Request) {
 
     // Generate measurements (either from Bodygram API or fallback to mock data)
     let mockMeasurements;
+    let dataSource = 'bodygram'; // Default source
 
     if (bodygramResponse) {
       // Use data from Bodygram API if available
@@ -232,15 +233,21 @@ export async function POST(request: Request) {
         bmi: bodygramResponse.bmi || 75 / (userHeight / 100) ** 2, // kg/m²
       };
     } else {
-      // Fallback to mock data if Bodygram API call failed
-      const baseWeight = (userHeight - 100) * 0.9;
+      // Fallback to static mock data if Bodygram API call failed
+      dataSource = 'mock/sample data';
+
+      // Calculate a sensible weight based on height using BMI 22 (healthy middle)
+      const healthyBmi = 22;
+      const healthyWeight = healthyBmi * (userHeight / 100) ** 2;
+
+      // Static measurements based on height proportions
       mockMeasurements = {
         height: userHeight, // cm
-        weight: baseWeight, // kg
-        chest: 95 + Math.floor(Math.random() * 5), // cm
-        waist: 80 + Math.floor(Math.random() * 5), // cm
-        hips: 100 + Math.floor(Math.random() * 5), // cm
-        bmi: baseWeight / (userHeight / 100) ** 2, // kg/m²
+        weight: Math.round(healthyWeight * 10) / 10, // kg (rounded to 1 decimal)
+        chest: Math.round(userHeight * 0.54), // cm - static proportion of height
+        waist: Math.round(userHeight * 0.45), // cm - static proportion of height
+        hips: Math.round(userHeight * 0.57), // cm - static proportion of height
+        bmi: healthyBmi, // kg/m²
       };
     }
 
@@ -251,6 +258,7 @@ export async function POST(request: Request) {
       timestamp: string;
       processedAt: string;
       measurements: typeof mockMeasurements;
+      dataSource: string; // New field to indicate data source
       bodygramData?: any;
       bodygramError?: string | null;
       blobUrl?: string | null;
@@ -262,6 +270,7 @@ export async function POST(request: Request) {
       timestamp,
       processedAt: new Date().toISOString(),
       measurements: mockMeasurements,
+      dataSource: dataSource,
     };
 
     // Include Bodygram data or error if available
