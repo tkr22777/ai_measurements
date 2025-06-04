@@ -3,21 +3,51 @@
 import { useState, useEffect } from 'react';
 import { useUser } from './UserContext';
 
-// Define the interface at the top of the file
+// Define shared interfaces for API responses
+interface Measurements {
+  height: number;
+  weight: number;
+  chest: number;
+  waist: number;
+  hips: number;
+  bmi: number;
+}
+
+interface BodygramApiResponse {
+  customScanId: string;
+  measurements?: {
+    weight?: number;
+    chest?: number;
+    waist?: number;
+    hips?: number;
+    bmi?: number;
+  };
+  status: 'success' | 'error';
+  error?: string;
+  [key: string]: unknown;
+}
+
 interface MeasurementResult {
   userId: string;
   height: number;
   processedAt: string;
-  measurements: {
-    height: number;
-    weight: number;
-    chest: number;
-    waist: number;
-    hips: number;
-    bmi: number;
-  };
+  measurements: Measurements;
   dataSource: string;
-  bodygramData?: any;
+  bodygramData?: BodygramApiResponse;
+  bodygramError?: string;
+  bodygramStatus?: 'success' | 'error' | 'not_called';
+  blobUrl?: string;
+}
+
+interface ProcessMeasurementResponse {
+  success: boolean;
+  message?: string;
+  userId: string;
+  height: number;
+  processedAt: string;
+  measurements: Measurements;
+  dataSource: string;
+  bodygramData?: BodygramApiResponse;
   bodygramError?: string;
   bodygramStatus?: 'success' | 'error' | 'not_called';
   blobUrl?: string;
@@ -71,7 +101,7 @@ export default function BodyMeasurement() {
   }, [userId]);
 
   // Internal success handler
-  const handleSuccess = (data: any) => {
+  const handleSuccess = (data: ProcessMeasurementResponse) => {
     console.log('Body measurement processing successful:', data);
     // You could also do something with the measurement data here,
     // such as updating UI elements or triggering other actions
@@ -118,7 +148,7 @@ export default function BodyMeasurement() {
         throw new Error(`Error: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as ProcessMeasurementResponse;
       setResult(data.message || 'Processing completed successfully');
 
       // Store the result for display

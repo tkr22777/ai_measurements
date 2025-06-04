@@ -1,8 +1,66 @@
 import { NextResponse } from 'next/server';
 import { put, list } from '@vercel/blob';
 
+// Type definitions for Bodygram API
+interface BodygramPhotoScan {
+  age: number;
+  weight: number;
+  height: number;
+  gender: 'male' | 'female';
+  frontPhoto: string;
+  rightPhoto: string;
+}
+
+interface BodygramPayload {
+  customScanId: string;
+  photoScan: BodygramPhotoScan;
+  noStatsPhotoScan: {
+    frontPhoto: string;
+    rightPhoto: string;
+  };
+  noWeightPhotoScan: Omit<BodygramPhotoScan, 'weight'>;
+  statsEstimations: BodygramPhotoScan;
+}
+
+interface BodygramMeasurements {
+  weight?: number;
+  chest?: number;
+  waist?: number;
+  hips?: number;
+  bmi?: number;
+}
+
+interface BodygramApiResponse {
+  customScanId: string;
+  measurements?: BodygramMeasurements;
+  status: 'success' | 'error';
+  error?: string;
+  [key: string]: unknown;
+}
+
+interface Measurements {
+  height: number;
+  weight: number;
+  chest: number;
+  waist: number;
+  hips: number;
+  bmi: number;
+}
+
+interface ProcessedResult {
+  userId: string;
+  height: number;
+  timestamp: string;
+  processedAt: string;
+  measurements: Measurements;
+  dataSource: string;
+  bodygramData?: BodygramApiResponse;
+  bodygramError?: string | null;
+  blobUrl?: string | null;
+}
+
 // Bodygram API integration
-const callBodygramAPI = async (userHeight: number) => {
+const callBodygramAPI = async (userHeight: number): Promise<BodygramApiResponse> => {
   try {
     // Get Bodygram API credentials from environment variables
     const BODYGRAM_ORG_ID = process.env.BODYGRAM_ORG_ID;
@@ -17,7 +75,7 @@ const callBodygramAPI = async (userHeight: number) => {
     const heightInMm = Math.round(userHeight * 10);
 
     // Prepare the request payload
-    const payload = {
+    const payload: BodygramPayload = {
       customScanId: `user_scan_${Date.now()}`,
       photoScan: {
         age: 29,
@@ -43,6 +101,8 @@ const callBodygramAPI = async (userHeight: number) => {
         weight: 75000,
         height: heightInMm,
         gender: 'male',
+        frontPhoto: 'string',
+        rightPhoto: 'string',
       },
     };
 
@@ -66,7 +126,7 @@ const callBodygramAPI = async (userHeight: number) => {
       throw new Error(`Bodygram API error: ${response.status}`);
     }
 
-    const bodygramData = await response.json();
+    const bodygramData = (await response.json()) as BodygramApiResponse;
     console.log('Bodygram API response:', bodygramData);
 
     return bodygramData;
@@ -77,7 +137,7 @@ const callBodygramAPI = async (userHeight: number) => {
 };
 
 // Store data in Vercel Blob Storage
-const storeInBlobStore = async (userId: string, data: any) => {
+const storeInBlobStore = async (userId: string, data: ProcessedResult): Promise<string | null> => {
   try {
     // Create blob path
     const blobPath = `processing/${userId}/process_result.json`;
@@ -101,7 +161,7 @@ const storeInBlobStore = async (userId: string, data: any) => {
 };
 
 // Retrieve data from Vercel Blob Storage
-const getFromBlobStore = async (userId: string) => {
+const getFromBlobStore = async (userId: string): Promise<ProcessedResult | null> => {
   try {
     // Create blob path
     const blobPath = `processing/${userId}/process_result.json`;
@@ -126,7 +186,7 @@ const getFromBlobStore = async (userId: string) => {
       throw new Error(`Failed to fetch blob data: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as ProcessedResult;
     return data;
   } catch (error) {
     console.error('Error retrieving from Vercel Blob Storage:', error);
@@ -206,8 +266,8 @@ export async function POST(request: Request) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Call Bodygram API for body measurements
-    let bodygramResponse = null;
-    let bodygramError = null;
+    let bodygramResponse: BodygramApiResponse | null = null;
+    let bodygramError: string | null = null;
 
     try {
       bodygramResponse = await callBodygramAPI(userHeight);
@@ -218,19 +278,19 @@ export async function POST(request: Request) {
     }
 
     // Generate measurements (either from Bodygram API or fallback to mock data)
-    let mockMeasurements;
+    let mockMeasurements: Measurements;
     let dataSource = 'bodygram'; // Default source
 
-    if (bodygramResponse) {
+    if (bodygramResponse && bodygramResponse.measurements) {
       // Use data from Bodygram API if available
-      // This is a placeholder - you would extract actual measurements from bodygramResponse
+      const measurements = bodygramResponse.measurements;
       mockMeasurements = {
         height: userHeight, // cm
-        weight: bodygramResponse.weight ? bodygramResponse.weight / 1000 : 75, // kg (converted from g)
-        chest: bodygramResponse.chest || 95 + Math.floor(Math.random() * 5), // cm
-        waist: bodygramResponse.waist || 80 + Math.floor(Math.random() * 5), // cm
-        hips: bodygramResponse.hips || 100 + Math.floor(Math.random() * 5), // cm
-        bmi: bodygramResponse.bmi || 75 / (userHeight / 100) ** 2, // kg/m²
+        weight: measurements.weight ? measurements.weight / 1000 : 75, // kg (converted from g)
+        chest: measurements.chest || 95 + Math.floor(Math.random() * 5), // cm
+        waist: measurements.waist || 80 + Math.floor(Math.random() * 5), // cm
+        hips: measurements.hips || 100 + Math.floor(Math.random() * 5), // cm
+        bmi: measurements.bmi || 75 / (userHeight / 100) ** 2, // kg/m²
       };
     } else {
       // Fallback to static mock data if Bodygram API call failed
@@ -252,18 +312,6 @@ export async function POST(request: Request) {
     }
 
     // Create the result object to store
-    interface ProcessedResult {
-      userId: string;
-      height: number;
-      timestamp: string;
-      processedAt: string;
-      measurements: typeof mockMeasurements;
-      dataSource: string; // New field to indicate data source
-      bodygramData?: any;
-      bodygramError?: string | null;
-      blobUrl?: string | null;
-    }
-
     const processedResult: ProcessedResult = {
       userId,
       height: userHeight,
@@ -271,15 +319,10 @@ export async function POST(request: Request) {
       processedAt: new Date().toISOString(),
       measurements: mockMeasurements,
       dataSource: dataSource,
+      bodygramData: bodygramResponse || undefined,
+      bodygramError: bodygramError,
+      blobUrl: null,
     };
-
-    // Include Bodygram data or error if available
-    if (bodygramResponse) {
-      processedResult.bodygramData = bodygramResponse;
-    }
-    if (bodygramError) {
-      processedResult.bodygramError = bodygramError;
-    }
 
     // Store the result in Vercel Blob Storage
     const blobUrl = await storeInBlobStore(userId, processedResult);
