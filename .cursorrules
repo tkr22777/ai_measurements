@@ -91,3 +91,25 @@
 - Generate proper key props for lists to prevent unnecessary re-renders
 - Use environment variables with NEXT_PUBLIC_ prefix for client-side access
 - Configure ESLint with next/core-web-vitals rules 
+
+# ============================================================================
+# CURSOR RULES BOUNDARY - DO NOT MODIFY ABOVE THIS LINE
+# All future additions to this .cursorrules file must be added below this line
+# ============================================================================
+
+## Commit Message Guidelines
+- Use concise, single-line commit messages (max 72 characters)
+- Start with an imperative verb: "Fix", "Add", "Update", "Remove", "Refactor"
+- Be specific about what was changed, not how it was changed
+- Avoid verbose multi-line descriptions in commit messages
+- Examples:
+  - ✅ "Fix TypeScript safety violations by replacing 'any' types"
+  - ✅ "Add user authentication with JWT tokens"
+  - ✅ "Refactor BodyMeasurement component into smaller parts"
+  - ❌ "Fix TypeScript safety violations - Replace all 'any' types with proper interfaces and add strict TS config"
+
+## Cursor Rules Management
+- Never modify any content above the "CURSOR RULES BOUNDARY" line
+- Always add new rules and guidelines below the boundary line
+- Maintain this file structure to preserve existing project standards
+- Use clear section headers for new rule categories 
