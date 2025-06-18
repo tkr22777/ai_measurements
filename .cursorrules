@@ -1,123 +1,50 @@
 # PROJECT 001: React + Next.js + TypeScript + Vercel
 
-## Engineering Mindset
-- You are a principal software engineer
-- You are responsible for code quality, organization, and readability
-- Create step-by-step plans before implementing changes
-- Make small, incremental changes and verify them
-- Generate functions with single, clear purpose - split if doing multiple things
+## Engineering Standards
+- Principal software engineer mindset - quality, organization, readability
+- Small incremental changes, single-purpose functions
+- TypeScript strict mode, no 'any' types, proper interfaces
+- Components <200 lines, single responsibility
+- Container/presentation component separation
 
-## TypeScript Configuration
-- Enable strict mode with noImplicitAny, strictNullChecks, strictFunctionTypes, noImplicitReturns
-- Use unknown instead of any for truly unknown types
-- Use branded types for domain values: `type UserId = string & { __brand: 'UserId' }`
-- Use discriminated unions for state management: `type Status = { type: 'loading' } | { type: 'success', data: T }`
-- Create type guards for runtime validation: `function isUser(obj: unknown): obj is User`
-- Use type-only imports: `import type { User } from './types'`
+## Architecture
+- **Next.js**: App Router, Server Components default, 'use client' only when needed
+- **State**: useState for UI, Context for shared data, React Query for server state
+- **API**: Route handlers in app/api/, proper TypeScript, NextRequest/NextResponse
+- **Performance**: Image component, React.memo, dynamic imports, code splitting
 
-## Next.js App Router Architecture
-- Use App Router (app/) over Pages Router for new projects
-- Organize routes with folders: `app/dashboard/settings/page.tsx`
-- Use loading.tsx, error.tsx, not-found.tsx for route-level UI states
-- Create layout.tsx files for shared layouts between route segments
-- Default to Server Components - add 'use client' only when necessary
-- Use Client Components for interactivity: event handlers, state, browser APIs
-- Keep Server Components for data fetching, static content, and SEO
+## Code Standards
+- Path mapping: `"@/*": ["./app/*"]`
+- Feature-based component organization
+- Custom hooks for business logic, no API calls in components
+- Proper loading/error states, type guards, branded types
+- Environment variables: NEXT_PUBLIC_ for client-side
 
-## React Component Architecture
-- Always generate TypeScript components with proper interfaces
-- Generate components with single responsibility - one component, one purpose
-- Generate container components (data fetching) separate from presentation components (UI only)
-- Use custom hooks for business logic - never put API calls directly in components
-- Generate composition patterns instead of deeply nested prop passing
-- Always generate proper component interfaces with required/optional props
-
-## Data Fetching & API Patterns
-- Use native fetch() in Server Components with automatic caching
-- Implement parallel data fetching with Promise.all() in Server Components
-- Use React Query/SWR for client-side server state - never store API data in local state
-- Create API routes in app/api/ directory: `app/api/users/route.ts`
-- Use Server Actions for form handling: `async function createUser(formData: FormData)`
-- Export named functions (GET, POST, PUT, DELETE) from route.ts files
-- Use NextRequest and NextResponse for proper typing
-
-## State Management Strategy
-- Use local state (useState) for UI-only state (modals, forms, toggles)
-- Use global state (Context/Redux) only for data shared across multiple features
-- Use React Query/SWR for server state management
-- Generate proper loading and error states for all async operations
-
-## Performance Optimization
-- Use Next.js Image component with priority for above-fold images
-- Generate React.memo for pure components that receive complex props
-- Use useMemo for expensive calculations, useCallback for functions passed as props
-- Implement dynamic imports for code splitting: `const Component = dynamic(() => import('./Component'))`
-- Optimize fonts with next/font: `import { Inter } from 'next/font/google'`
-- Generate lazy loading for routes and heavy components
-
-## Vercel Deployment
-- Use Vercel CLI for local development: `vercel dev` instead of `npm run dev`
-- Set environment variables in Vercel dashboard for each environment
-- Use preview deployments for testing environment variable changes
-- Never commit .env files - use Vercel's environment variable management
-- Enable Edge Runtime for API routes when possible: `export const runtime = 'edge'`
-- Use Vercel Analytics: `import { Analytics } from '@vercel/analytics/react'`
-
-## TypeScript Safety Rules
-- Always generate strict TypeScript interfaces for props, API responses, and form data
-- Never use `any` type - generate proper types even for complex objects
-- Generate type-safe event handlers and API calls
-- Use proper return types for all functions and custom hooks
-- Type Server Action parameters with FormData or custom schemas
-- Type metadata exports for SEO: `export const metadata: Metadata`
-
-## Testing Strategy
-- Use React Testing Library for component testing
-- Test user interactions and data flow for integration testing
-- Mock API calls for reliable testing
-- Focus on testing business logic, edge cases, and data transformations
-- Place all tests under `tests/` mirroring package paths
-
-## File Organization
-- Component Organization: Group components by feature, not by type
-- Use consistent naming: `ComponentName.tsx`, `ComponentName.test.tsx`
-- Generate consistent folder structure: `components/FeatureName/ComponentName/`
-- Use path mapping in tsconfig: `"@/*": ["./src/*"]`
-- Create barrel exports with index.ts for clean imports
-
-## Code Quality
-- Never generate components with more than 200 lines - split them
-- Avoid over-commenting; docstrings only when intent is non-obvious
-- Generate proper key props for lists to prevent unnecessary re-renders
-- Use environment variables with NEXT_PUBLIC_ prefix for client-side access
-- Configure ESLint with next/core-web-vitals rules 
+## Testing & Deployment
+- React Testing Library, mock API calls, test business logic
+- Vercel CLI: `vercel dev`, environment variables in dashboard
+- Never commit .env files, use Edge Runtime when possible
 
 # ============================================================================
 # CURSOR RULES BOUNDARY - DO NOT MODIFY ABOVE THIS LINE
 # All future additions to this .cursorrules file must be added below this line
 # ============================================================================
 
-## Commit Message Guidelines
-- Use concise, single-line commit messages (max 72 characters)
-- Start with an imperative verb: "Fix", "Add", "Update", "Remove", "Refactor"
-- Be specific about what was changed, not how it was changed
-- Avoid verbose multi-line descriptions in commit messages
-- Examples:
-  - ✅ "Fix TypeScript safety violations by replacing 'any' types"
-  - ✅ "Add user authentication with JWT tokens"
-  - ✅ "Refactor BodyMeasurement component into smaller parts"
-  - ❌ "Fix TypeScript safety violations - Replace all 'any' types with proper interfaces and add strict TS config"
+## Commit Messages
+- Single line, max 72 chars, imperative verb
+- "Fix/Add/Update/Remove/Refactor" + specific change
+- No verbose multi-line descriptions
 
-## Communication Guidelines
-- Be concise and direct - avoid verbose explanations unless requested
-- Lead with the answer, then provide context if needed
-- When explaining code behavior (like API 404s), state the reason briefly
-- Focus on actionable information over detailed background
-- Assume user understands technical concepts unless they ask for clarification
-- Use bullet points for multiple items, single sentences for simple answers
+## Communication
+- Concise and direct, lead with answer
+- Focus on actionable info, assume technical understanding
+- Brief explanations, bullet points over paragraphs
+
+## README Guidelines
+- Max 50 lines, developer-focused only
+- Include: setup, env vars, scripts, status, API endpoints
+- No marketing copy, deployment details, or verbose explanations
 
 ## Cursor Rules Management
-- Never modify any content above the "CURSOR RULES BOUNDARY" line
-- Always add new rules and guidelines below the boundary line
-- Maintain this file structure to preserve existing project standards
-- Use clear section headers for new rule categories 
+- Never modify content above boundary line
+- Add new rules below with clear section headers 
