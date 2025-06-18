@@ -38,10 +38,10 @@ BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
 
 ### Phase 2: Page Migration
 
-- [ ] Extract camera functionality to `/camera` route
+- [x] Extract camera functionality to `/camera` route
 - [ ] Move photo gallery to `/gallery` route
 - [ ] Move measurements to `/measurements` route
-- [ ] Create settings page at `/settings`
+- [x] Create settings page at `/settings`
 
 ### Phase 3: Enhanced UX
 
@@ -60,10 +60,11 @@ BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
 - Production-ready logging system
 - Real-time photo refresh with event-driven updates
 - Multi-page navigation infrastructure (URL + state hybrid)
+- Camera functionality migrated to dedicated route
 
 **🔄 Current Focus:**
 
-- Page migration to dedicated routes
+- Gallery and measurements page migration
 
 **📋 Backlog:**
 
