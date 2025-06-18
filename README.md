@@ -25,15 +25,46 @@ BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
 - `npm run verify` - Test core functionality
 - `npm run format` - Format code
 
+## Multi-Page Navigation Plan
+
+**Converting from single-page to multi-page app with URL + state navigation**
+
+### Phase 1: Navigation Infrastructure
+
+- [ ] Create Next.js App Router structure
+- [ ] Build navigation state manager (NavProvider)
+- [ ] Add navigation bar component
+- [ ] Create consistent page layout wrapper
+
+### Phase 2: Page Migration
+
+- [ ] Extract camera functionality to `/camera` route
+- [ ] Move photo gallery to `/gallery` route
+- [ ] Move measurements to `/measurements` route
+- [ ] Create settings page at `/settings`
+
+### Phase 3: Enhanced UX
+
+- [ ] Add page transitions and animations
+- [ ] Implement breadcrumbs/progress indicators
+- [ ] Ensure deep linking support
+- [ ] Polish navigation experience
+
 ## Project Status
 
 **✅ Completed:**
 
 - TypeScript safety (strict mode, no 'any' types)
-- Component architecture (6 focused components <200 lines)
-- Error boundary for development debugging
+- Component architecture (20 focused components <200 lines)
+- Modular business logic with service/validation layers
+- Production-ready logging system
+- Real-time photo refresh with event-driven updates
 
-**🔄 Next:**
+**🔄 Current Focus:**
+
+- Multi-page navigation system (URL + state hybrid)
+
+**📋 Backlog:**
 
 - React Query for server state
 - Testing infrastructure
