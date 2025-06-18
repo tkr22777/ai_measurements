@@ -37,11 +37,24 @@ export async function GET(request: Request) {
     if (blobs.length > 0) {
       const duration = Date.now() - startTime;
       log.api.response('GET', '/api/images', 200, duration);
-      log.user.action(userId, 'image_retrieved', { type, blobUrl: blobs[0].url });
+
+      // Add cache-busting parameter to prevent browser caching issues
+      const baseUrl = blobs[0].url;
+      const separator = baseUrl.includes('?') ? '&' : '?';
+      const cacheBuster = blobs[0].uploadedAt
+        ? new Date(blobs[0].uploadedAt).getTime()
+        : Date.now();
+      const imageUrlWithCacheBuster = `${baseUrl}${separator}v=${cacheBuster}`;
+
+      log.user.action(userId, 'image_retrieved', {
+        type,
+        blobUrl: blobs[0].url,
+        cacheBustedUrl: imageUrlWithCacheBuster,
+      });
 
       return NextResponse.json({
         success: true,
-        imageUrl: blobs[0].url,
+        imageUrl: imageUrlWithCacheBuster,
         uploadedAt: blobs[0].uploadedAt,
       });
     }
