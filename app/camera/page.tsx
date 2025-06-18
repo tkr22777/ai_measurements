@@ -3,7 +3,6 @@
 import PageLayout from '@/components/Layout/PageLayout';
 import Camera from '@/components/Camera';
 import ImagePreview from '@/components/ImagePreview';
-import PermissionRequest from '@/components/PermissionRequest';
 import useCameraApp from '@/hooks/useCameraApp';
 import { useUser } from '@/components/UserContext';
 import { cn, styles } from '@/utils/styles';
