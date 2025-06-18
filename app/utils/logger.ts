@@ -1,28 +1,45 @@
 import pino from 'pino';
 
 /**
- * Production-ready logger with beautiful development experience
- *
- * Features:
- * - Colored, pretty logs in development
- * - Structured JSON logs in production
- * - Proper log levels (debug, info, warn, error)
- * - Zero performance impact in production
+ * Next.js-compatible logger with beautiful development experience
+ * Avoids worker threads that can cause issues in Next.js
  */
+
+// Custom pretty formatter for development
+const prettyPrint = (obj: any) => {
+  const timestamp = new Date().toLocaleTimeString();
+  const level =
+    obj.level === 30 ? 'INFO' : obj.level === 40 ? 'WARN' : obj.level === 50 ? 'ERROR' : 'DEBUG';
+  const levelColor =
+    obj.level === 30
+      ? '\x1b[32m'
+      : obj.level === 40
+        ? '\x1b[33m'
+        : obj.level === 50
+          ? '\x1b[31m'
+          : '\x1b[36m';
+  const reset = '\x1b[0m';
+
+  console.log(`${levelColor}${level}${reset} ${timestamp} - ${obj.msg}`);
+
+  // Show additional context if available
+  const context = { ...obj };
+  delete context.level;
+  delete context.time;
+  delete context.msg;
+  delete context.pid;
+  delete context.hostname;
+
+  if (Object.keys(context).length > 0) {
+    console.log('  Context:', JSON.stringify(context, null, 2));
+  }
+};
+
 const logger = pino({
   level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-  transport:
-    process.env.NODE_ENV === 'development'
-      ? {
-          target: 'pino-pretty',
-          options: {
-            colorize: true,
-            translateTime: 'HH:MM:ss',
-            ignore: 'pid,hostname',
-            messageFormat: '{levelLabel} - {msg}',
-          },
-        }
-      : undefined,
+  ...(process.env.NODE_ENV === 'development' && {
+    write: prettyPrint,
+  }),
   formatters: {
     level: (label) => {
       return { level: label };
