@@ -1,15 +1,15 @@
 'use client';
 
-import Camera from './components/Camera';
-import ImagePreview from './components/ImagePreview';
-import PermissionRequest from './components/PermissionRequest';
-import AppInfo from './components/AppInfo';
-import PhotoSpots from './components/PhotoSpots';
-import UserIdInput from './components/UserIdInput';
-import BodyMeasurement from './components/BodyMeasurement';
-import SimpleImageDisplay from './components/SimpleImageDisplay';
-import useCameraApp from './hooks/useCameraApp';
-import { useUser } from './components/UserContext';
+import Camera from '@/components/Camera';
+import ImagePreview from '@/components/ImagePreview';
+import PermissionRequest from '@/components/PermissionRequest';
+import AppInfo from '@/components/AppInfo';
+import PhotoSpots from '@/components/PhotoSpots';
+import UserIdInput from '@/components/UserIdInput';
+import BodyMeasurement from '@/components/BodyMeasurement';
+import SimpleImageDisplay from '@/components/SimpleImageDisplay';
+import useCameraApp from '@/hooks/useCameraApp';
+import { useUser } from '@/components/UserContext';
 
 export default function Home() {
   const {

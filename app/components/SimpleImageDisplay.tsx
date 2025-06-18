@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useUser } from './UserContext';
+import { useUser } from '@/components/UserContext';
 
 // Constants
 const PLACEHOLDER_IMAGE = '/placeholder-image.svg';

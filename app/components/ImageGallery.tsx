@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
-import { dataURLtoFile } from '../utils/imageUtils';
-import { useUser } from './UserContext';
-import '../styles/ImageGallery.css';
+import { dataURLtoFile } from '@/utils/imageUtils';
+import { useUser } from '@/components/UserContext';
+import '@/styles/ImageGallery.css';
 
 interface ImageItem {
   id: string;

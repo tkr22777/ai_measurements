@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import useCamera from './useCamera';
 import usePhotoCapture from './usePhotoCapture';
-import { dataURLtoFile, generateFilename } from '../utils/imageUtils';
-import { galleryEvents } from '../components/ImageGallery';
-import { useUser } from '../components/UserContext';
+import { dataURLtoFile, generateFilename } from '@/utils/imageUtils';
+import { galleryEvents } from '@/components/ImageGallery';
+import { useUser } from '@/components/UserContext';
 
 interface UseCameraAppReturn {
   isClient: boolean;

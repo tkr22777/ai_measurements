@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '../UserContext';
+import { useUser } from '@/components/UserContext';
 import useMeasurementAPI from './useMeasurementAPI';
 import MeasurementResultDisplay from './MeasurementResultDisplay';
 import MeasurementInputForm from './MeasurementInputForm';
