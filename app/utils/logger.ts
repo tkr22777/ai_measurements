@@ -1,51 +1,76 @@
-import pino from 'pino';
-
 /**
- * Next.js-compatible logger with beautiful development experience
- * Avoids worker threads that can cause issues in Next.js
+ * Lightweight, Next.js-compatible logger
+ * Zero dependencies, no punycode warnings
  */
 
-// Custom pretty formatter for development
-const prettyPrint = (obj: any) => {
-  const timestamp = new Date().toLocaleTimeString();
-  const level =
-    obj.level === 30 ? 'INFO' : obj.level === 40 ? 'WARN' : obj.level === 50 ? 'ERROR' : 'DEBUG';
-  const levelColor =
-    obj.level === 30
-      ? '\x1b[32m'
-      : obj.level === 40
-        ? '\x1b[33m'
-        : obj.level === 50
-          ? '\x1b[31m'
-          : '\x1b[36m';
-  const reset = '\x1b[0m';
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-  console.log(`${levelColor}${level}${reset} ${timestamp} - ${obj.msg}`);
+interface LogContext {
+  [key: string]: any;
+}
 
-  // Show additional context if available
-  const context = { ...obj };
-  delete context.level;
-  delete context.time;
-  delete context.msg;
-  delete context.pid;
-  delete context.hostname;
+class SimpleLogger {
+  private isDev = process.env.NODE_ENV === 'development';
 
-  if (Object.keys(context).length > 0) {
-    console.log('  Context:', JSON.stringify(context, null, 2));
+  private getColor(level: LogLevel): string {
+    switch (level) {
+      case 'debug':
+        return '\x1b[36m'; // Cyan
+      case 'info':
+        return '\x1b[32m'; // Green
+      case 'warn':
+        return '\x1b[33m'; // Yellow
+      case 'error':
+        return '\x1b[31m'; // Red
+      default:
+        return '\x1b[0m';
+    }
   }
-};
 
-const logger = pino({
-  level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-  ...(process.env.NODE_ENV === 'development' && {
-    write: prettyPrint,
-  }),
-  formatters: {
-    level: (label) => {
-      return { level: label };
-    },
-  },
-});
+  private formatMessage(level: LogLevel, message: string, context?: LogContext): void {
+    const timestamp = new Date().toLocaleTimeString();
+    const levelUpper = level.toUpperCase();
+
+    if (this.isDev) {
+      // Colored output for development
+      const color = this.getColor(level);
+      const reset = '\x1b[0m';
+
+      console.log(`${color}${levelUpper}${reset} ${timestamp} - ${message}`);
+
+      if (context && Object.keys(context).length > 0) {
+        console.log('  Context:', JSON.stringify(context, null, 2));
+      }
+    } else {
+      // JSON output for production
+      const logObj = {
+        level,
+        time: new Date().toISOString(),
+        msg: message,
+        ...context,
+      };
+      console.log(JSON.stringify(logObj));
+    }
+  }
+
+  debug(context: LogContext, message: string): void {
+    this.formatMessage('debug', message, context);
+  }
+
+  info(context: LogContext, message: string): void {
+    this.formatMessage('info', message, context);
+  }
+
+  warn(context: LogContext, message: string): void {
+    this.formatMessage('warn', message, context);
+  }
+
+  error(context: LogContext, message: string): void {
+    this.formatMessage('error', message, context);
+  }
+}
+
+const logger = new SimpleLogger();
 
 /**
  * Structured logging helpers for common use cases
@@ -95,7 +120,7 @@ export const log = {
 
   // General application logging
   app: {
-    start: () => logger.info('Application started'),
+    start: () => logger.info({}, 'Application started'),
 
     config: (config: Record<string, any>) => logger.debug({ config }, 'Application configuration'),
 
