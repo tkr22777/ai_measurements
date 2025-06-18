@@ -39,7 +39,7 @@ export default function SimpleImageDisplay() {
     <div className="p-4">
       <h2 className={cn(styles.text.heading, 'text-xl mb-4')}>Simple Image Display</h2>
 
-      {error && <div className="p-3 mb-4 bg-red-100 text-red-700 rounded-md">Error: {error}</div>}
+      {error && <div className={cn(styles.status.error, 'mb-4')}>Error: {error}</div>}
 
       <div className="flex flex-wrap gap-6">
         <PhotoDisplay

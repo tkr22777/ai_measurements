@@ -33,17 +33,8 @@ export default function Home() {
   // Use the shared user context instead of component-specific state
   const { userId, setUserId } = useUser();
 
-  console.log('Home component rendering with state:', {
-    isClient,
-    isCapturing,
-    hasLocalImage: !!localCapturedImage,
-    userId,
-  });
-
   // Handle taking a photo for a specific type
   const handleTakePhoto = (type: 'front' | 'side') => {
-    console.log(`handleTakePhoto called for type: ${type}`);
-
     if (!userId) {
       alert('Please enter a User ID first');
       return;
@@ -54,7 +45,6 @@ export default function Home() {
 
   // Create a wrapper for uploadToServer to fix type issues
   const handleUpload = async (photoType: string) => {
-    console.log(`Handling upload for ${photoType}`);
     return uploadToServer(photoType);
   };
 

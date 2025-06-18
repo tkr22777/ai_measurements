@@ -51,4 +51,12 @@ export const styles = {
     spinner: 'w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin',
     container: 'flex items-center justify-center p-4',
   },
+
+  // Status messages - replaces alert/status patterns
+  status: {
+    success: 'p-3 rounded-md bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-200',
+    error: 'p-3 rounded-md bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-200',
+    warning: 'p-3 rounded-md bg-yellow-50 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-200',
+    info: 'p-3 rounded-md bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-200',
+  },
 };

@@ -76,17 +76,9 @@ export default function MeasurementInputForm({
         )}
       </button>
 
-      {result && (
-        <div className="mt-3 p-3 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-md text-sm">
-          {result}
-        </div>
-      )}
+      {result && <div className={cn(styles.status.success, 'mt-3 text-sm')}>{result}</div>}
 
-      {error && (
-        <div className="mt-3 p-3 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-md text-sm">
-          {error}
-        </div>
-      )}
+      {error && <div className={cn(styles.status.error, 'mt-3 text-sm')}>{error}</div>}
     </div>
   );
 }

@@ -6,8 +6,6 @@ import { cn, styles } from '@/utils/styles';
 import type { PhotoSpotsProps } from './types';
 
 export default function PhotoSpots({ onTakePhoto }: PhotoSpotsProps) {
-  console.log('PhotoSpots component rendering');
-
   const { isLoading, frontPhoto, sidePhoto, handlePhotoClick } = usePhotoSpots(onTakePhoto);
 
   // Loading state
