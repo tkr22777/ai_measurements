@@ -13,12 +13,12 @@ export default function NavBar() {
         <div className="flex items-center justify-between h-16">
           {/* App Title */}
           <div className="flex items-center">
-            <h1 className={cn(styles.text.heading, 'text-lg font-semibold')}>
+            <h1 className={cn(styles.text.heading, 'text-sm md:text-lg font-semibold')}>
               📱 Body Measurement App
             </h1>
           </div>
 
-          {/* Navigation Items */}
+          {/* Navigation Items - Desktop */}
           <div className="hidden md:flex items-center space-x-1">
             {NAVIGATION_ITEMS.map((item) => (
               <button
@@ -38,32 +38,32 @@ export default function NavBar() {
             ))}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Indicator */}
           <div className="md:hidden">
-            <button
-              className={cn(styles.button.base, 'p-2 rounded-md text-gray-600 dark:text-gray-300')}
-            >
-              ☰
-            </button>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              {NAVIGATION_ITEMS.find((item) => item.route === currentPage)?.icon || '🏠'}
+            </div>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        <div className="md:hidden pb-3">
-          <div className="flex flex-wrap gap-2">
+        {/* Mobile Navigation - Always visible with better touch targets */}
+        <div className="md:hidden pb-4">
+          <div className="grid grid-cols-5 gap-1">
             {NAVIGATION_ITEMS.map((item) => (
               <button
                 key={item.route}
                 onClick={() => navigateTo(item.route)}
                 className={cn(
-                  'px-3 py-2 rounded-md text-xs font-medium transition-colors',
+                  'px-2 py-3 rounded-md text-xs font-medium transition-colors text-center',
+                  'min-h-[60px] flex flex-col items-center justify-center', // Better touch targets
                   currentPage === item.route
                     ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
                     : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                 )}
+                title={item.description}
               >
-                <span className="mr-1">{item.icon}</span>
-                {item.label}
+                <span className="text-lg mb-1">{item.icon}</span>
+                <span className="text-[10px] leading-tight">{item.label}</span>
               </button>
             ))}
           </div>
