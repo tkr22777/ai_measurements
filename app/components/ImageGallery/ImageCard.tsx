@@ -1,10 +1,17 @@
 import Image from 'next/image';
 import DeleteButton from './DeleteButton';
+import { cn, styles } from '@/utils/styles';
 import type { ImageCardProps } from './types';
 
 export default function ImageCard({ image, isDeleting, onDelete, formatTitle }: ImageCardProps) {
   return (
-    <div className="relative group overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+    <div
+      className={cn(
+        styles.card.base,
+        styles.card.shadow,
+        'relative group overflow-hidden transition-all duration-300'
+      )}
+    >
       <div className="relative h-36 w-full">
         <Image
           src={image.thumbnailUrl}
@@ -24,10 +31,8 @@ export default function ImageCard({ image, isDeleting, onDelete, formatTitle }: 
         />
       </div>
 
-      <div className="p-3">
-        <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-          {formatTitle(image.title)}
-        </h3>
+      <div className={styles.card.padding}>
+        <h3 className={cn(styles.text.heading, 'text-sm truncate')}>{formatTitle(image.title)}</h3>
       </div>
     </div>
   );

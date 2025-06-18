@@ -51,6 +51,20 @@
 - Never create separate endpoints for operations on same resource
 - Example: `/api/images` handles GET, POST, DELETE - not `/api/upload`, `/api/delete-image`
 
+## Styling Standards
+- **Single approach**: Use `utils/styles.ts` with `cn()` utility and `styles` object
+- **No CSS files**: Avoid CSS modules, separate CSS files, or complex styling folders
+- **Composable classes**: Combine reusable styles with custom Tailwind classes
+- **Rule**: If same 3+ classes appear together 2+ times, add to `styles` object
+- **Usage**: `cn(styles.card.base, styles.card.shadow, 'custom-class')`
+- **Keep simple**: One utility file, no UI component folders, readable components
+
+## Component Organization
+- **Directory structure**: Complex components (>50 lines) get own directory with index.tsx
+- **Consistent pattern**: index.tsx, types.ts, utils.ts, hooks.ts as needed
+- **No duplicates**: Single source of truth for each component
+- **Modular imports**: Clean import paths using directory structure
+
 ## Cursor Rules Management
 - Never modify content above boundary line
 - Add new rules below with clear section headers 
