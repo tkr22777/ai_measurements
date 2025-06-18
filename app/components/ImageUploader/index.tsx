@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { eventBus } from '@/utils/eventBus';
-import { useUser } from './UserContext';
+import { useUser } from '@/components/UserContext';
 import '../styles/ImageUploader.css';
 
 export default function ImageUploader() {
