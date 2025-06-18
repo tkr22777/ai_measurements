@@ -13,7 +13,7 @@ import {
 import { eventBus } from '@/utils/eventBus';
 
 // Service response type
-export interface ServiceResult<T = any> {
+export interface ServiceResult<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -88,7 +88,7 @@ export async function uploadImageToServer(formData: FormData): Promise<ServiceRe
  * Fetches user images from server
  * Steps: 1. Build endpoint 2. Fetch data 3. Parse response 4. Return images
  */
-export async function fetchUserImages(userId: string): Promise<ServiceResult<any[]>> {
+export async function fetchUserImages(userId: string): Promise<ServiceResult<unknown[]>> {
   try {
     // Step 1: Build endpoint
     const endpoint = userId ? `/api/images?userId=${userId}` : `/api/images?userId=&showAll=false`;

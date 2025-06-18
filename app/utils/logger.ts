@@ -6,7 +6,7 @@
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 interface LogContext {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 class SimpleLogger {
@@ -93,7 +93,7 @@ export const log = {
 
   // User action logging
   user: {
-    action: (userId: string, action: string, metadata?: Record<string, any>) =>
+    action: (userId: string, action: string, metadata?: Record<string, unknown>) =>
       logger.info({ userId, action, ...metadata }, `User ${userId} - ${action}`),
 
     error: (userId: string, action: string, error: Error) =>
@@ -122,9 +122,10 @@ export const log = {
   app: {
     start: () => logger.info({}, 'Application started'),
 
-    config: (config: Record<string, any>) => logger.debug({ config }, 'Application configuration'),
+    config: (config: Record<string, unknown>) =>
+      logger.debug({ config }, 'Application configuration'),
 
-    performance: (operation: string, duration: number, metadata?: Record<string, any>) =>
+    performance: (operation: string, duration: number, metadata?: Record<string, unknown>) =>
       logger.debug(
         { operation, duration, ...metadata },
         `Performance: ${operation} took ${duration}ms`

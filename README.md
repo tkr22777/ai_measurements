@@ -36,12 +36,13 @@ BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
 - [x] Add navigation bar component
 - [x] Create consistent page layout wrapper
 
-### Phase 2: Page Migration
+### Phase 2: Page Migration ✅
 
 - [x] Extract camera functionality to `/camera` route
-- [ ] Move photo gallery to `/gallery` route
-- [ ] Move measurements to `/measurements` route
+- [x] Move photo gallery to `/gallery` route
+- [x] Move measurements to `/measurements` route
 - [x] Create settings page at `/settings`
+- [x] Clean up original single-page layout
 
 ### Phase 3: Enhanced UX
 
@@ -60,11 +61,11 @@ BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
 - Production-ready logging system
 - Real-time photo refresh with event-driven updates
 - Multi-page navigation infrastructure (URL + state hybrid)
-- Camera functionality migrated to dedicated route
+- Complete page migration with dedicated routes
 
 **🔄 Current Focus:**
 
-- Gallery and measurements page migration
+- Enhanced UX and navigation polish
 
 **📋 Backlog:**
 

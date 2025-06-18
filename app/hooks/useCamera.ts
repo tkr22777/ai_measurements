@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { log } from '@/utils/logger';
 
 interface UseCameraProps {}
 
@@ -42,34 +43,25 @@ export default function useCamera({}: UseCameraProps = {}): UseCameraReturn {
   };
 
   const requestCameraPermission = useCallback(async () => {
-    if (!isClient) {
-      console.log('Cannot access camera during server rendering');
-      return;
-    }
-
-    if (!isMounted) {
-      console.log('Component not yet mounted, waiting...');
+    if (!isClient || !isMounted) {
       return;
     }
 
     setIsLoading(true);
-    console.log('Starting camera request...');
+    log.user.action('camera', 'request_permission', { facingMode });
 
     try {
       // Check if MediaDevices API is available
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.error('Camera API is not supported in your browser');
+        const error = new Error('Camera API is not supported in your browser');
+        log.user.error('camera', 'api_not_supported', error);
         setHasPermission(false);
         setIsLoading(false);
         return;
       }
 
-      console.log('MediaDevices API available, checking for existing stream...');
-
       // Close any existing stream
       stopCamera();
-
-      console.log('Requesting camera with facingMode: ' + facingMode);
 
       const constraints = {
         video: {
@@ -80,73 +72,65 @@ export default function useCamera({}: UseCameraProps = {}): UseCameraReturn {
         audio: false,
       };
 
-      console.log(`Requesting stream with constraints: ${JSON.stringify(constraints)}`);
-
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
-
-      console.log('Camera stream obtained successfully');
       streamRef.current = stream;
 
-      // Even if videoRef.current is null now, we can still proceed since
-      // we've moved the video element out of conditional rendering
-      // This will ensure the stream is ready when the video element becomes available
+      // Set up video element when ready
       setTimeout(() => {
         if (videoRef.current) {
-          console.log('Setting video source object');
           videoRef.current.srcObject = stream;
 
-          // Add event listeners to track video loading
           videoRef.current.onloadedmetadata = () => {
-            console.log('Video metadata loaded');
             videoRef.current?.play().catch((e) => {
-              console.error(`Error playing video: ${e}`);
+              log.user.error('camera', 'video_play_failed', e as Error);
             });
           };
 
           videoRef.current.onloadeddata = () => {
-            console.log('Video data loaded, starting playback');
             setIsLoading(false);
             setHasPermission(true);
+            log.user.action('camera', 'permission_granted', { facingMode });
           };
 
           videoRef.current.onerror = (e) => {
-            console.error(`Video error: ${e}`);
+            const error = new Error(`Video error: ${e}`);
+            log.user.error('camera', 'video_error', error);
             setIsLoading(false);
             setHasPermission(false);
           };
         } else {
-          console.log('Video element still not available after getting stream');
-          // We'll set the state to proceed anyway, and the stream will be connected when the element renders
+          // Stream ready but video element not available yet
           setIsLoading(false);
           setHasPermission(true);
         }
-      }, 50); // Short delay to ensure DOM updates have processed
+      }, 50);
     } catch (err) {
-      console.error('Error accessing camera:', err);
+      const error = err as Error;
       setIsLoading(false);
       setHasPermission(false);
 
-      // Log detailed error information
+      // Log specific error types
       if (err instanceof DOMException) {
         if (err.name === 'NotAllowedError') {
-          console.error(`Permission error: Camera access was denied. ${err.message}`);
+          log.user.error('camera', 'permission_denied', error);
         } else if (err.name === 'NotFoundError') {
-          console.error(`No camera: No camera detected on this device. ${err.message}`);
+          log.user.error('camera', 'no_camera_found', error);
         } else if (err.name === 'NotReadableError') {
-          console.error(
-            `Camera busy: Camera is already in use by another application. ${err.message}`
-          );
+          log.user.error('camera', 'camera_busy', error);
         } else {
-          console.error(`DOM error: ${err.name} - ${err.message}`);
+          log.user.error('camera', 'dom_error', error);
         }
       } else {
-        console.error(`Unknown error: ${err instanceof Error ? err.message : String(err)}`);
+        log.user.error('camera', 'unknown_error', error);
       }
     }
   }, [isClient, isMounted, facingMode]);
 
   const switchCamera = () => {
     setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'));
+    log.user.action('camera', 'switch_camera', {
+      newFacingMode: facingMode === 'user' ? 'environment' : 'user',
+    });
   };
 
   // Effect to request camera when facingMode changes

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { put, list } from '@vercel/blob';
+import { log } from '@/utils/logger';
 
 // Type definitions for Bodygram API
 interface BodygramPhotoScan {
@@ -109,7 +110,7 @@ const callBodygramAPI = async (userHeight: number): Promise<BodygramApiResponse>
     // Make the API call to Bodygram
     const apiUrl = `https://platform.bodygram.com/api/orgs/${BODYGRAM_ORG_ID}/scans`;
 
-    console.log(`Calling Bodygram API at: ${apiUrl}`);
+    log.api.request('POST', '/api/process');
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -122,16 +123,17 @@ const callBodygramAPI = async (userHeight: number): Promise<BodygramApiResponse>
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Bodygram API error (${response.status}): ${errorText}`);
-      throw new Error(`Bodygram API error: ${response.status}`);
+      const error = new Error(`Bodygram API error: ${response.status}`);
+      log.api.error('POST', '/api/process', error);
+      throw error;
     }
 
     const bodygramData = (await response.json()) as BodygramApiResponse;
-    console.log('Bodygram API response:', bodygramData);
+    log.api.response('POST', '/api/process', response.status);
 
     return bodygramData;
   } catch (error) {
-    console.error('Error calling Bodygram API:', error);
+    log.api.error('POST', '/api/process', error as Error);
     throw error;
   }
 };
@@ -153,9 +155,11 @@ const storeInBlobStore = async (userId: string, data: ProcessedResult): Promise<
       access: 'public', // Make it publicly accessible (or use 'private' if needed)
     });
 
+    log.api.response('POST', '/api/process/store', 200);
+
     return result.url;
   } catch (error) {
-    console.error('Error storing in Vercel Blob Storage:', error);
+    log.api.error('POST', '/api/process/store', error as Error);
     return null;
   }
 };
@@ -189,7 +193,7 @@ const getFromBlobStore = async (userId: string): Promise<ProcessedResult | null>
     const data = (await response.json()) as ProcessedResult;
     return data;
   } catch (error) {
-    console.error('Error retrieving from Vercel Blob Storage:', error);
+    log.api.error('GET', '/api/process/retrieve', error as Error);
     return null;
   }
 };
@@ -200,10 +204,10 @@ const deleteFromBlobStore = async (userId: string) => {
     // Note: Currently, the Vercel Blob API doesn't provide a direct delete method
     // This would require using the Vercel Blob Dashboard or implementing a workaround
     // For production use, you'd typically implement a proper deletion strategy
-    console.warn('Deletion from Vercel Blob not implemented');
+    log.api.response('DELETE', '/api/process/delete', 501); // Not implemented
     return false;
   } catch (error) {
-    console.error('Error deleting from Vercel Blob Storage:', error);
+    log.api.error('DELETE', '/api/process/delete', error as Error);
     return false;
   }
 };
@@ -233,7 +237,7 @@ export async function GET(request: Request) {
       result: storedResult,
     });
   } catch (error) {
-    console.error('Error retrieving measurement results:', error);
+    log.api.error('GET', '/api/process', error as Error);
     return NextResponse.json(
       { success: false, error: 'Failed to retrieve measurement results' },
       { status: 500 }
@@ -272,7 +276,7 @@ export async function POST(request: Request) {
     try {
       bodygramResponse = await callBodygramAPI(userHeight);
     } catch (error) {
-      console.error('Error from Bodygram API:', error);
+      log.api.error('POST', '/api/process/bodygram', error as Error);
       bodygramError = error instanceof Error ? error.message : 'Unknown error from Bodygram API';
       // We'll continue with mock data if the Bodygram API fails
     }

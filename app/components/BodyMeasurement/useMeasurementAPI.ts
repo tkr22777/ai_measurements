@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { log } from '@/utils/logger';
 import type { MeasurementResult, ProcessMeasurementResponse } from './types';
 
 interface UseMeasurementAPIProps {
@@ -115,7 +116,7 @@ export default function useMeasurementAPI({
         });
       }
 
-      console.log('Body measurement processing successful:', data);
+      log.user.action(userId, 'measurement_processed', { height });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       setError(errorMessage);
