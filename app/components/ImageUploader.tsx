@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { galleryEvents } from './ImageGallery';
+import { eventBus } from '@/utils/eventBus';
 import { useUser } from './UserContext';
 import '../styles/ImageUploader.css';
 
@@ -72,7 +72,7 @@ export default function ImageUploader() {
       setPreview(null);
       setUploadSuccess(true);
       // Refresh the gallery to show new image
-      galleryEvents.triggerRefresh();
+      eventBus.emit('image:uploaded');
 
       // Clear the file input
       if (fileInputRef.current) {

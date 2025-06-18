@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import useCamera from './useCamera';
 import usePhotoCapture from './usePhotoCapture';
 import { dataURLtoFile, generateFilename } from '@/utils/imageUtils';
-import { galleryEvents } from '@/components/ImageGallery';
+import { eventBus } from '@/utils/eventBus';
 import { useUser } from '@/components/UserContext';
 
 interface UseCameraAppReturn {
@@ -94,6 +94,10 @@ export default function useCameraApp(): UseCameraAppReturn {
 
         console.log(`${photoType} photo uploaded successfully!`, result);
         setUploadedImageUrl(result.imageUrl);
+
+        // Trigger gallery refresh
+        eventBus.emit('image:uploaded');
+
         return result.imageUrl;
       } catch (error) {
         console.error('Error uploading image:', error);

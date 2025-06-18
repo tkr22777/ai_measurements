@@ -1,117 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useUser } from '@/components/UserContext';
-
-interface ImageItem {
-  id: string;
-  title: string;
-  url: string;
-  thumbnailUrl: string;
-}
-
-// Global event system for triggering gallery refresh
-export const galleryEvents = {
-  onUpload: null as (() => void) | null,
-  triggerRefresh: () => {
-    if (galleryEvents.onUpload) {
-      galleryEvents.onUpload();
-    }
-  },
-};
+import useImageGallery from '@/hooks/useImageGallery';
 
 export default function ImageGallery() {
-  const [images, setImages] = useState<ImageItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-
-  // Use the shared user context instead of component's own state
   const { userId } = useUser();
-
-  // Function to refresh the gallery
-  const refreshGallery = useCallback(() => {
-    setRefreshTrigger((prev) => prev + 1);
-  }, []);
-
-  // Register the refresh function
-  useEffect(() => {
-    galleryEvents.onUpload = refreshGallery;
-    return () => {
-      galleryEvents.onUpload = null;
-    };
-  }, [refreshGallery]);
-
-  // Fetch images from Vercel Blob
-  useEffect(() => {
-    async function fetchImages() {
-      try {
-        setIsLoading(true);
-        console.log('Fetching images from API...');
-
-        // If userId is not provided, use the showAll parameter to either show all images or none
-        const endpoint = userId
-          ? `/api/images?userId=${userId}`
-          : `/api/images?userId=&showAll=false`;
-
-        console.log(`Using API endpoint: ${endpoint}`);
-        const response = await fetch(endpoint);
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch images');
-        }
-
-        const data = await response.json();
-        console.log('API response:', data);
-        console.log(`Received ${data.images?.length || 0} images from API`);
-
-        setImages(data.images || []);
-      } catch (err) {
-        console.error('Error loading images:', err);
-        setError('Failed to load images');
-        setImages([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchImages();
-  }, [refreshTrigger, userId]);
-
-  // Delete image function
-  const deleteImage = async (imageId: string, imageUrl: string) => {
-    try {
-      setIsDeletingId(imageId);
-      setDeleteError(null);
-
-      const response = await fetch('/api/images', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          url: imageUrl,
-          pathname: new URL(imageUrl).pathname,
-          userId: userId,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete image');
-      }
-
-      // Refresh the gallery to reflect the change
-      refreshGallery();
-    } catch (err) {
-      console.error('Error deleting image:', err);
-      setDeleteError(err instanceof Error ? err.message : 'Failed to delete image');
-    } finally {
-      setIsDeletingId(null);
-    }
-  };
+  const { images, isLoading, error, isDeletingId, deleteError, deleteImage } = useImageGallery({
+    userId,
+  });
 
   // Format title for display
   const formatTitle = (title: string) => {
