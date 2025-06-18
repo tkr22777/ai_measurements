@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { put, list } from '@vercel/blob';
+import { put, list, del } from '@vercel/blob';
 
 // GET handler to retrieve a specific image by user ID and type
 export async function GET(request: Request) {
@@ -121,5 +121,57 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('[POST] /api/images - Error uploading image:', error);
     return NextResponse.json({ success: false, error: 'Failed to upload image' }, { status: 500 });
+  }
+}
+
+// DELETE handler to delete an image
+export async function DELETE(request: Request) {
+  try {
+    const { url, pathname, userId } = await request.json();
+
+    console.log(
+      `[DELETE] /api/images - Delete request for userId: ${userId}, pathname: ${pathname}`
+    );
+
+    if (!url || !pathname) {
+      console.log('[DELETE] /api/images - Missing URL or pathname');
+      return NextResponse.json(
+        { success: false, error: 'URL and pathname are required' },
+        { status: 400 }
+      );
+    }
+
+    // Extract the user ID from the pathname for verification
+    // The path is images/userId/filename
+    const pathParts = pathname.split('/');
+    const pathUserId = pathParts.length > 1 ? pathParts[1] : null;
+
+    // If the userId from the request doesn't match the pathname's userId, reject the request
+    if (userId && pathUserId && userId !== pathUserId) {
+      console.error(
+        `[DELETE] /api/images - User ${userId} attempted to delete image from user ${pathUserId}`
+      );
+      return NextResponse.json(
+        { success: false, error: 'You can only delete your own images' },
+        { status: 403 }
+      );
+    }
+
+    console.log(
+      `[DELETE] /api/images - Deleting blob: ${pathname} for user: ${userId || 'unknown'}`
+    );
+
+    // Delete the blob using Vercel Blob API
+    await del(pathname);
+
+    console.log(`[DELETE] /api/images - Successfully deleted blob: ${pathname}`);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Image deleted successfully',
+    });
+  } catch (error) {
+    console.error('[DELETE] /api/images - Error deleting image:', error);
+    return NextResponse.json({ success: false, error: 'Failed to delete image' }, { status: 500 });
   }
 }
