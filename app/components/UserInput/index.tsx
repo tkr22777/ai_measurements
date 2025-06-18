@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useUser } from '@/components/UserContext';
+import { cn, styles } from '@/utils/styles';
 import type { UserInputProps } from './types';
 
 export default function UserInput({
@@ -32,15 +33,23 @@ export default function UserInput({
 
   if (!isEditing && userId) {
     return (
-      <div className="w-full max-w-md mx-auto mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-        <div className="flex items-center justify-between">
+      <div
+        className={cn(
+          'w-full max-w-md mx-auto mb-6 p-4 border rounded-lg',
+          'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+        )}
+      >
+        <div className={styles.layout.between}>
           <div>
             <p className="text-sm text-green-700 dark:text-green-300">User ID:</p>
             <p className="font-medium text-green-800 dark:text-green-200">{userId}</p>
           </div>
           <button
             onClick={handleEdit}
-            className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+            className={cn(
+              styles.button.base,
+              'px-3 py-1 text-sm bg-green-600 text-white hover:bg-green-700'
+            )}
           >
             Edit
           </button>
@@ -53,10 +62,7 @@ export default function UserInput({
     <div className="w-full max-w-md mx-auto mb-6">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label
-            htmlFor="userId"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-          >
+          <label htmlFor="userId" className={cn(styles.text.small, 'block font-medium mb-2')}>
             User ID
           </label>
           <input
@@ -66,7 +72,11 @@ export default function UserInput({
             onChange={(e) => setTempUserId(e.target.value)}
             placeholder={placeholder}
             maxLength={maxLength}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className={cn(
+              'w-full px-3 py-2 border rounded-md shadow-sm bg-white dark:bg-gray-800',
+              'border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            )}
             required
             autoFocus
           />
@@ -75,7 +85,11 @@ export default function UserInput({
           <button
             type="submit"
             disabled={!tempUserId.trim()}
-            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className={cn(
+              styles.button.base,
+              styles.button.primary,
+              'flex-1 disabled:opacity-50 disabled:cursor-not-allowed'
+            )}
           >
             {userId ? 'Update' : 'Set User ID'}
           </button>
@@ -83,7 +97,7 @@ export default function UserInput({
             <button
               type="button"
               onClick={handleCancel}
-              className="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700 transition-colors"
+              className={cn(styles.button.base, styles.button.secondary)}
             >
               Cancel
             </button>

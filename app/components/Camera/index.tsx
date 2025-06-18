@@ -3,6 +3,7 @@ import React from 'react';
 // import styles from './styles.module.css';
 import CameraControls from './CameraControls';
 import useCameraCapture from '../../hooks/useCameraCapture';
+import { cn } from '@/utils/styles';
 
 // The camera uses a dramatic filter with: contrast(140%) brightness(90%) saturate(130%)
 
@@ -27,9 +28,11 @@ const Camera: React.FC<CameraProps> = ({ onPhotoCapture }) => {
     <div className="w-full flex flex-col items-center mb-4 relative">
       <video
         ref={videoRef}
-        className={`w-full max-h-[70vh] object-cover rounded-lg bg-black ${
-          facingMode === 'user' ? 'scale-x-[-1]' : ''
-        } ${isCapturing ? 'block' : 'hidden'}`}
+        className={cn(
+          'w-full max-h-[70vh] object-cover rounded-lg bg-black',
+          facingMode === 'user' && 'scale-x-[-1]',
+          isCapturing ? 'block' : 'hidden'
+        )}
         style={{ filter: filterCssValue }}
         autoPlay
         playsInline

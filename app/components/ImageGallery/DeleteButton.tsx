@@ -1,3 +1,4 @@
+import { cn, styles } from '@/utils/styles';
 import type { DeleteButtonProps } from './types';
 
 export default function DeleteButton({
@@ -10,11 +11,16 @@ export default function DeleteButton({
     <button
       onClick={() => onDelete(imageId, imageUrl)}
       disabled={isDeleting}
-      className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-600 disabled:opacity-50"
+      className={cn(
+        'absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full transition-opacity duration-200',
+        'opacity-0 group-hover:opacity-100 hover:bg-red-600 disabled:opacity-50'
+      )}
       title="Delete image"
     >
       {isDeleting ? (
-        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        <div
+          className={cn(styles.loading.spinner, 'w-4 h-4 border-white border-t-transparent')}
+        ></div>
       ) : (
         <svg
           xmlns="http://www.w3.org/2000/svg"

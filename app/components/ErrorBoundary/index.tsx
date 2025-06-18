@@ -1,6 +1,7 @@
 'use client';
 
 import { Component, ReactNode } from 'react';
+import { cn, styles } from '@/utils/styles';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -41,31 +42,33 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-red-50 dark:bg-red-950 flex items-center justify-center p-4">
-          <div className="max-w-2xl w-full bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
-            <div className="flex items-center mb-4">
-              <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
-                <span className="text-white font-bold">!</span>
+        <div className={cn(styles.layout.center, 'min-h-screen bg-red-50 dark:bg-red-950 p-4')}>
+          <div className={cn(styles.card.base, styles.card.padding, 'max-w-2xl w-full shadow-lg')}>
+            <div className={cn(styles.layout.between, 'mb-4')}>
+              <div className={cn(styles.layout.center)}>
+                <div className={cn(styles.layout.center, 'w-8 h-8 bg-red-500 rounded-full mr-3')}>
+                  <span className="text-white font-bold">!</span>
+                </div>
+                <h1 className="text-xl font-semibold text-red-800 dark:text-red-200">
+                  Something went wrong
+                </h1>
               </div>
-              <h1 className="text-xl font-semibold text-red-800 dark:text-red-200">
-                Something went wrong
-              </h1>
             </div>
 
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
+            <p className={cn(styles.text.body, 'mb-4')}>
               The application encountered an error. This error has been logged for debugging.
             </p>
 
             <button
               onClick={this.handleReset}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors mb-4"
+              className={cn(styles.button.base, styles.button.primary, 'mb-4')}
             >
               Try Again
             </button>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-4">
-                <summary className="cursor-pointer text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <summary className={cn(styles.text.small, 'cursor-pointer font-medium mb-2')}>
                   Error Details (Development Only)
                 </summary>
                 <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md text-sm">

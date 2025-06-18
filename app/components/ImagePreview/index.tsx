@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import '../../styles/ImageUploader.css'; // Import the styles for user-info-banner
+import { cn, styles } from '@/utils/styles';
 
 interface ImagePreviewProps {
   imageUrl: string;
@@ -33,8 +33,10 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
     }
   };
 
+  const buttonClasses = cn(styles.button.base, 'py-3 px-6 text-base m-2');
+
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className={cn(styles.layout.centerCol, 'w-full')}>
       <img
         src={imageUrl}
         alt="Captured"
@@ -43,9 +45,14 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
 
       {/* User info banner */}
       {!uploadedImageUrl && (
-        <div className="user-info-banner mb-4 w-full">
+        <div
+          className={cn(
+            'bg-blue-50 dark:bg-blue-900/20 rounded-md p-2 mb-4 w-full text-center',
+            'text-sm text-blue-700 dark:text-blue-300'
+          )}
+        >
           <p>
-            Uploading as: <span className="user-id">{userId}</span>
+            Uploading as: <span className="font-semibold ml-1">{userId}</span>
           </p>
         </div>
       )}
@@ -63,10 +70,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
               View uploaded image
             </a>
           </div>
-          <button
-            className="bg-blue-600 text-white border-none rounded-md py-3 px-6 text-base font-medium cursor-pointer transition-all duration-200 m-2 outline-none hover:bg-blue-700 hover:translate-y-[-1px] hover:shadow-sm active:translate-y-0 active:shadow-none"
-            onClick={onRetake}
-          >
+          <button className={cn(buttonClasses, styles.button.primary)} onClick={onRetake}>
             Take New Photo
           </button>
         </div>
@@ -77,14 +81,11 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
             <p className="text-sm mt-1">{uploadError}</p>
           </div>
           <div className="flex justify-center gap-4 mt-2 w-full">
-            <button
-              className="bg-blue-600 text-white border-none rounded-md py-3 px-6 text-base font-medium cursor-pointer transition-all duration-200 m-2 outline-none hover:bg-blue-700 hover:translate-y-[-1px] hover:shadow-sm active:translate-y-0 active:shadow-none"
-              onClick={onRetake}
-            >
+            <button className={cn(buttonClasses, styles.button.primary)} onClick={onRetake}>
               Retake
             </button>
             <button
-              className="bg-green-600 text-white border-none rounded-md py-3 px-6 text-base font-medium cursor-pointer transition-all duration-200 m-2 outline-none hover:bg-green-700 hover:translate-y-[-1px] hover:shadow-sm active:translate-y-0 active:shadow-none"
+              className={cn(buttonClasses, 'bg-green-600 text-white hover:bg-green-700')}
               onClick={handleUpload}
             >
               Try Again
@@ -93,23 +94,20 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
         </div>
       ) : (
         <div className="flex justify-center gap-4 mt-2 w-full">
-          <button
-            className="bg-blue-600 text-white border-none rounded-md py-3 px-6 text-base font-medium cursor-pointer transition-all duration-200 m-2 outline-none hover:bg-blue-700 hover:translate-y-[-1px] hover:shadow-sm active:translate-y-0 active:shadow-none"
-            onClick={onRetake}
-          >
+          <button className={cn(buttonClasses, styles.button.primary)} onClick={onRetake}>
             Retake
           </button>
           <button
-            className={`bg-green-600 text-white border-none rounded-md py-3 px-6 text-base font-medium cursor-pointer transition-all duration-200 m-2 outline-none ${
-              !isUploading
-                ? 'hover:bg-green-700 hover:translate-y-[-1px] hover:shadow-sm active:translate-y-0 active:shadow-none'
-                : 'opacity-75 cursor-not-allowed'
-            }`}
+            className={cn(
+              buttonClasses,
+              'bg-green-600 text-white',
+              !isUploading ? 'hover:bg-green-700' : 'opacity-75 cursor-not-allowed'
+            )}
             onClick={handleUpload}
             disabled={isUploading}
           >
             {isUploading ? (
-              <span className="flex items-center">
+              <span className={styles.layout.center}>
                 <svg
                   className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
                   xmlns="http://www.w3.org/2000/svg"

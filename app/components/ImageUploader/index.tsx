@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { eventBus } from '@/utils/eventBus';
 import { useUser } from '@/components/UserContext';
-import '../styles/ImageUploader.css';
+import { cn, styles } from '@/utils/styles';
 
 export default function ImageUploader() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -115,25 +115,32 @@ export default function ImageUploader() {
   }, []);
 
   return (
-    <div className="image-uploader-container">
-      <h2>Upload Images</h2>
+    <div className={cn(styles.card.base, styles.card.padding, 'my-8 w-full shadow-sm')}>
+      <h2 className={styles.text.heading}>Upload Images</h2>
 
       {/* Drag and drop area */}
       <div
-        className="upload-area"
+        className={cn(
+          'border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer bg-white mb-6 transition-all duration-200',
+          'hover:border-blue-400 hover:bg-blue-50'
+        )}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onClick={() => fileInputRef.current?.click()}
       >
         {preview ? (
-          <div className="preview-container">
-            <img src={preview} alt="Preview" className="preview-image" />
-            <p className="preview-text">Click to change or drag another image</p>
+          <div className={cn(styles.layout.centerCol, 'w-full')}>
+            <img
+              src={preview}
+              alt="Preview"
+              className="max-w-full max-h-48 mb-4 rounded object-cover"
+            />
+            <p className={styles.text.muted}>Click to change or drag another image</p>
           </div>
         ) : (
-          <div className="upload-placeholder">
-            <p>Click to select an image or drag and drop here</p>
-            <p className="upload-hint">Supports JPEG, PNG, WebP</p>
+          <div className="text-gray-500">
+            <p className="text-lg mb-2">Click to select an image or drag and drop here</p>
+            <p className={styles.text.small}>Supports JPEG, PNG, WebP</p>
           </div>
         )}
       </div>
@@ -144,16 +151,19 @@ export default function ImageUploader() {
         type="file"
         accept="image/*"
         onChange={handleFileChange}
-        style={{ display: 'none' }}
+        className="hidden"
       />
 
       {/* Upload button */}
       {selectedFile && (
-        <div className="upload-controls">
+        <div className="mb-4">
           <button
             onClick={handleUpload}
             disabled={uploading}
-            className={`upload-button ${uploading ? 'uploading' : ''}`}
+            className={cn(
+              styles.button.base,
+              uploading ? 'bg-blue-400 cursor-not-allowed' : styles.button.primary
+            )}
           >
             {uploading ? 'Uploading...' : 'Upload Image'}
           </button>
@@ -161,8 +171,14 @@ export default function ImageUploader() {
       )}
 
       {/* Status messages */}
-      {uploadError && <div className="upload-error">{uploadError}</div>}
-      {uploadSuccess && <div className="upload-success">Image uploaded successfully!</div>}
+      {uploadError && (
+        <div className="p-3 rounded-md bg-red-50 text-red-700 mb-4">{uploadError}</div>
+      )}
+      {uploadSuccess && (
+        <div className="p-3 rounded-md bg-green-50 text-green-700 mb-4">
+          Image uploaded successfully!
+        </div>
+      )}
     </div>
   );
 }

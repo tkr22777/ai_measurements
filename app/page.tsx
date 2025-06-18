@@ -10,6 +10,7 @@ import BodyMeasurement from '@/components/BodyMeasurement';
 import SimpleImageDisplay from '@/components/SimpleImageDisplay';
 import useCameraApp from '@/hooks/useCameraApp';
 import { useUser } from '@/components/UserContext';
+import { cn, styles } from '@/utils/styles';
 
 export default function Home() {
   const {
@@ -58,9 +59,21 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-100 dark:bg-black">
-      <div className="w-full max-w-lg flex flex-col items-center bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 my-4 overflow-hidden md:rounded-lg md:shadow-md md:p-6 sm:rounded-none sm:shadow-none sm:p-4 sm:m-0 sm:min-h-screen sm:justify-start">
-        <h1 className="text-2xl font-semibold mb-6 text-center text-gray-800 dark:text-gray-100 sm:mt-2">
+    <main
+      className={cn(
+        styles.layout.centerCol,
+        'justify-start min-h-screen p-4 bg-gray-100 dark:bg-black'
+      )}
+    >
+      <div
+        className={cn(
+          styles.card.base,
+          styles.layout.centerCol,
+          'w-full max-w-lg shadow-md p-6 my-4 overflow-hidden',
+          'md:rounded-lg md:shadow-md md:p-6 sm:rounded-none sm:shadow-none sm:p-4 sm:m-0 sm:min-h-screen sm:justify-start'
+        )}
+      >
+        <h1 className={cn(styles.text.heading, 'text-2xl mb-6 text-center sm:mt-2')}>
           Mobile Camera
         </h1>
 
@@ -69,15 +82,15 @@ export default function Home() {
 
         {/* Camera Interface - Conditionally shown */}
         {!isClient ? (
-          <div className="flex flex-col items-center justify-center text-center p-4 gap-4 w-full min-h-[200px]">
-            <div className="w-10 h-10 border-4 border-blue-200 dark:border-blue-900 rounded-full border-l-blue-600 animate-spin mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-300">Loading camera interface...</p>
+          <div
+            className={cn(styles.layout.centerCol, 'text-center p-4 gap-4 w-full min-h-[200px]')}
+          >
+            <div className={cn(styles.loading.spinner, 'w-10 h-10 border-l-blue-600 mb-4')}></div>
+            <p className={styles.text.body}>Loading camera interface...</p>
           </div>
         ) : !isCapturing && !localCapturedImage ? (
           <div className="w-full">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
-              Take New Photos
-            </h2>
+            <h2 className={cn(styles.text.heading, 'text-xl mb-4')}>Take New Photos</h2>
             <PhotoSpots onTakePhoto={handleTakePhoto} />
           </div>
         ) : isCapturing ? (
@@ -98,16 +111,14 @@ export default function Home() {
 
         {/* User's Photos - Always shown, now positioned after camera interface */}
         <div className="w-full p-4 mt-6 border-t border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
-            Your Photos
-          </h2>
+          <h2 className={cn(styles.text.heading, 'text-xl mb-4')}>Your Photos</h2>
           <SimpleImageDisplay />
         </div>
 
         <BodyMeasurement />
         <AppInfo />
 
-        <div className="text-xs text-gray-500 dark:text-gray-400 mt-5 text-center">
+        <div className={cn(styles.text.small, 'mt-5 text-center')}>
           {isClient ? 'Client initialized' : 'Loading...'}
         </div>
       </div>
