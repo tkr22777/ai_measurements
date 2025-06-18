@@ -108,6 +108,14 @@
   - ✅ "Refactor BodyMeasurement component into smaller parts"
   - ❌ "Fix TypeScript safety violations - Replace all 'any' types with proper interfaces and add strict TS config"
 
+## Communication Guidelines
+- Be concise and direct - avoid verbose explanations unless requested
+- Lead with the answer, then provide context if needed
+- When explaining code behavior (like API 404s), state the reason briefly
+- Focus on actionable information over detailed background
+- Assume user understands technical concepts unless they ask for clarification
+- Use bullet points for multiple items, single sentences for simple answers
+
 ## Cursor Rules Management
 - Never modify any content above the "CURSOR RULES BOUNDARY" line
 - Always add new rules and guidelines below the boundary line

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "verify": "node scripts/verify.js"
   },
   "dependencies": {
     "@vercel/blob": "^1.0.0",

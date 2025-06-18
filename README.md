@@ -183,3 +183,93 @@ export default function MyPage() {
 ```
 
 Note that it requires a userId to be set in the UserContext to function properly.
+
+# Body Measurement Camera App
+
+A React + Next.js + TypeScript camera application for body measurements, deployed on Vercel.
+
+## Features
+
+- Camera capture functionality
+- Body measurement processing via Bodygram API
+- TypeScript with strict type safety
+- Modern React component architecture
+- Vercel deployment ready
+
+## Development
+
+### Quick Start
+
+```bash
+npm install
+npm run dev
+```
+
+### Verification
+
+Run the verification script to test core functionality:
+
+```bash
+npm run verify
+```
+
+This script will:
+
+- Start the Next.js development server
+- Test key API endpoints (/api/images, /api/process)
+- Verify the home page loads correctly
+- Report results and clean up
+
+### Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Run ESLint
+- `npm run format` - Format code with Prettier
+- `npm run verify` - Run lightweight functionality tests
+
+## Project Status ✅
+
+All critical issues have been resolved:
+
+- ✅ **TypeScript Safety**: Replaced all 'any' types with proper interfaces
+- ✅ **Component Architecture**: Refactored 359-line component into 6 focused components
+- ✅ **Import Organization**: Fixed path mapping and standardized imports
+
+**Next Priorities:**
+
+1. React Query/SWR for server state management
+2. Testing infrastructure (Jest + React Testing Library)
+3. Error boundaries and loading states
+4. Environment variable documentation
+
+## Architecture
+
+### Component Structure
+
+- Container components handle data fetching and business logic
+- Presentation components focus on UI only
+- Custom hooks manage API calls and complex state
+- TypeScript interfaces ensure type safety
+
+### API Endpoints
+
+- `/api/images` - Handle image upload and retrieval
+- `/api/process` - Process body measurements via Bodygram API
+
+## Environment Variables
+
+Create a `.env.local` file with:
+
+```
+BODYGRAM_API_KEY=your_api_key
+BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
+```
+
+## Deployment
+
+This project is configured for Vercel deployment with:
+
+- Automatic builds on push
+- Environment variable management
+- Edge Runtime optimization
