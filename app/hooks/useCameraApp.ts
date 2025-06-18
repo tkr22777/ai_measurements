@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import useCamera from './useCamera';
 import usePhotoCapture from './usePhotoCapture';
-import { dataURLtoFile, generateFilename } from '@/utils/imageUtils';
-import { eventBus } from '@/utils/eventBus';
+import useImageUpload from './useImageUpload';
 import { useUser } from '@/components/UserContext';
 
 interface UseCameraAppReturn {
@@ -27,90 +26,24 @@ export default function useCameraApp(): UseCameraAppReturn {
   const [isClient, setIsClient] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [localCapturedImage, setLocalCapturedImage] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [currentPhotoType, setCurrentPhotoType] = useState<string | null>(null);
 
   // Get userId from shared context
   const { userId } = useUser();
 
-  // Set client state when component loads
+  // Initialize focused hooks
+  const { hasPermission, isLoading, requestCameraPermission, stopCamera } = useCamera();
+  const { capturePhoto, resetPhoto } = usePhotoCapture();
+  const { isUploading, uploadError, uploadedImageUrl, uploadImage, resetUploadState } =
+    useImageUpload();
+
+  // Client initialization effect
   useEffect(() => {
     setIsClient(true);
     console.log('Camera app initialized on client');
   }, []);
 
-  // Initialize camera hook
-  const { hasPermission, isLoading, requestCameraPermission, stopCamera } = useCamera();
-
-  // Initialize photo capture hook
-  const { capturePhoto, resetPhoto } = usePhotoCapture();
-
-  // Upload functionality is centralized here
-  const uploadToServer = useCallback(
-    async (photoType: string): Promise<string | null> => {
-      if (!localCapturedImage) {
-        console.log('No image available to upload');
-        return null;
-      }
-
-      if (!userId) {
-        setUploadError('User ID is required to upload a photo');
-        return null;
-      }
-
-      if (!photoType || (photoType !== 'front' && photoType !== 'side')) {
-        setUploadError('Valid photo type (front or side) is required');
-        return null;
-      }
-
-      try {
-        setIsUploading(true);
-        setUploadError(null);
-        console.log(`Preparing to upload ${photoType} photo for user ${userId}...`);
-
-        // Convert data URL to File
-        const filename = generateFilename();
-        const file = dataURLtoFile(localCapturedImage, filename);
-
-        // Create form data
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('userId', userId);
-        formData.append('type', photoType);
-
-        // Upload to our API route
-        const response = await fetch('/api/images', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.error || 'Upload failed');
-        }
-
-        console.log(`${photoType} photo uploaded successfully!`, result);
-        setUploadedImageUrl(result.imageUrl);
-
-        // Trigger gallery refresh
-        eventBus.emit('image:uploaded');
-
-        return result.imageUrl;
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        setUploadError(error instanceof Error ? error.message : 'Upload failed');
-        return null;
-      } finally {
-        setIsUploading(false);
-      }
-    },
-    [localCapturedImage, userId]
-  );
-
-  // When permission changes, update capturing state
+  // Camera permission effect
   useEffect(() => {
     if (hasPermission === true && !isLoading) {
       setIsCapturing(true);
@@ -121,22 +54,34 @@ export default function useCameraApp(): UseCameraAppReturn {
     }
   }, [hasPermission, isLoading]);
 
-  // Handle retake action
-  const handleRetake = () => {
+  // Upload function - now much simpler
+  const uploadToServer = useCallback(
+    async (photoType: string): Promise<string | null> => {
+      if (!localCapturedImage) {
+        console.log('No image available to upload');
+        return null;
+      }
+
+      return uploadImage(localCapturedImage, userId, photoType);
+    },
+    [localCapturedImage, userId, uploadImage]
+  );
+
+  // Retake handler
+  const handleRetake = useCallback(() => {
     console.log('Retaking photo');
     setLocalCapturedImage(null);
-    setUploadedImageUrl(null);
-    setUploadError(null);
+    resetUploadState();
     resetPhoto();
     requestCameraPermission();
-  };
+  }, [resetUploadState, resetPhoto, requestCameraPermission]);
 
-  // Handle photo capture
-  const handlePhotoCapture = (imageUrl: string) => {
+  // Photo capture handler
+  const handlePhotoCapture = useCallback((imageUrl: string) => {
     console.log('Photo captured successfully');
     setIsCapturing(false);
     setLocalCapturedImage(imageUrl);
-  };
+  }, []);
 
   return {
     isClient,

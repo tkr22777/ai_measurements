@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { eventBus } from '@/utils/eventBus';
+import { fetchUserImages, deleteImageFromServer } from '@/services/imageService';
 
 interface ImageItem {
   id: string;
@@ -30,12 +31,12 @@ export default function useImageGallery({ userId }: UseImageGalleryProps): UseIm
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  // Function to refresh the gallery
+  // Gallery refresh function
   const refreshGallery = useCallback(() => {
     setRefreshTrigger((prev) => prev + 1);
   }, []);
 
-  // Listen to global events
+  // Event listeners setup
   useEffect(() => {
     eventBus.on('gallery:refresh', refreshGallery);
     eventBus.on('image:uploaded', refreshGallery);
@@ -46,72 +47,45 @@ export default function useImageGallery({ userId }: UseImageGalleryProps): UseIm
     };
   }, [refreshGallery]);
 
-  // Fetch images from API
+  // Fetch images effect - now much simpler
   useEffect(() => {
-    async function fetchImages() {
-      try {
-        setIsLoading(true);
-        console.log('Fetching images from API...');
+    async function loadImages() {
+      setIsLoading(true);
+      setError(null);
 
-        const endpoint = userId
-          ? `/api/images?userId=${userId}`
-          : `/api/images?userId=&showAll=false`;
+      const result = await fetchUserImages(userId);
 
-        console.log(`Using API endpoint: ${endpoint}`);
-        const response = await fetch(endpoint);
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch images');
-        }
-
-        const data = await response.json();
-        console.log('API response:', data);
-        console.log(`Received ${data.images?.length || 0} images from API`);
-
-        setImages(data.images || []);
-      } catch (err) {
-        console.error('Error loading images:', err);
-        setError('Failed to load images');
+      if (result.success) {
+        setImages(result.data!);
+      } else {
+        setError(result.error!);
         setImages([]);
-      } finally {
-        setIsLoading(false);
       }
+
+      setIsLoading(false);
     }
 
-    fetchImages();
+    loadImages();
   }, [refreshTrigger, userId]);
 
-  // Delete image function
-  const deleteImage = async (imageId: string, imageUrl: string) => {
-    try {
+  // Delete image function - now much simpler
+  const deleteImage = useCallback(
+    async (imageId: string, imageUrl: string) => {
       setIsDeletingId(imageId);
       setDeleteError(null);
 
-      const response = await fetch('/api/images', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          url: imageUrl,
-          pathname: new URL(imageUrl).pathname,
-          userId: userId,
-        }),
-      });
+      const result = await deleteImageFromServer(imageUrl, userId);
 
-      if (!response.ok) {
-        throw new Error('Failed to delete image');
+      if (result.success) {
+        refreshGallery();
+      } else {
+        setDeleteError(result.error!);
       }
 
-      // Refresh the gallery to reflect the change
-      refreshGallery();
-    } catch (err) {
-      console.error('Error deleting image:', err);
-      setDeleteError(err instanceof Error ? err.message : 'Failed to delete image');
-    } finally {
       setIsDeletingId(null);
-    }
-  };
+    },
+    [userId, refreshGallery]
+  );
 
   return {
     images,
