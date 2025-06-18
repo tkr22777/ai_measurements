@@ -34,26 +34,3 @@ export function generateFilename(): string {
   const random = Math.random().toString(36).substring(2, 10);
   return `image-${timestamp}-${random}.jpg`;
 }
-
-/**
- * Adds cache-busting parameter to image URL to force browser refresh
- */
-export function addCacheBuster(imageUrl: string): string {
-  if (!imageUrl) return imageUrl;
-
-  const separator = imageUrl.includes('?') ? '&' : '?';
-  const cacheBuster = Date.now();
-  return `${imageUrl}${separator}cb=${cacheBuster}`;
-}
-
-/**
- * Preloads an image to ensure it's fresh in the browser cache
- */
-export function preloadImage(imageUrl: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve();
-    img.onerror = reject;
-    img.src = imageUrl;
-  });
-}

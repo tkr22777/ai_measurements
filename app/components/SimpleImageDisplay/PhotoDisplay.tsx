@@ -24,6 +24,7 @@ export default function PhotoDisplay({
       <h3 className={cn(styles.text.heading, 'text-lg mb-2')}>{title}</h3>
       <div className="relative">
         <img
+          key={photoUrl}
           src={imageError ? placeholderImage : photoUrl}
           alt={title}
           className={cn(

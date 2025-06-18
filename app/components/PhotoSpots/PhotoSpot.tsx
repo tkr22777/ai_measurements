@@ -37,7 +37,12 @@ export default function PhotoSpot({ type, photoUrl, onPhotoClick }: PhotoSpotPro
         onClick={() => onPhotoClick(type)}
       >
         {photoUrl ? (
-          <img src={photoUrl} alt={displayName} className="w-full h-full object-cover" />
+          <img
+            key={photoUrl}
+            src={photoUrl}
+            alt={displayName}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div className={cn(styles.layout.centerCol, 'h-full text-gray-500 dark:text-gray-400')}>
             <CameraIcon />
