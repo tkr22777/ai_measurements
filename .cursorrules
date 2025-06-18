@@ -65,6 +65,14 @@
 - **No duplicates**: Single source of truth for each component
 - **Modular imports**: Clean import paths using directory structure
 
+## Logging Standards
+- **Library**: Use Pino with `utils/logger.ts` - beautiful colors in dev, structured JSON in production
+- **No console.log**: Replace all console statements with proper logging
+- **Structured logging**: Use `log.api`, `log.user`, `log.image`, `log.app` helpers
+- **Performance tracking**: Include duration for API calls and operations
+- **Error context**: Always include userId, operation context in error logs
+- **Usage**: `log.api.request('POST', '/api/images', userId)`, `log.user.action(userId, 'upload', metadata)`
+
 ## Cursor Rules Management
 - Never modify content above boundary line
 - Add new rules below with clear section headers 

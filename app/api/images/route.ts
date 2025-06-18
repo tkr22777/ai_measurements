@@ -1,23 +1,27 @@
 import { NextResponse } from 'next/server';
 import { put, list, del } from '@vercel/blob';
+import { log } from '@/utils/logger';
 
 // GET handler to retrieve a specific image by user ID and type
 export async function GET(request: Request) {
+  const startTime = Date.now();
+  let userId: string | null = null;
+
   try {
     const url = new URL(request.url);
-    const userId = url.searchParams.get('userId');
+    userId = url.searchParams.get('userId');
     const type = url.searchParams.get('type');
 
-    console.log(`[GET] /api/images - Requested image for userId: ${userId}, type: ${type}`);
+    log.api.request('GET', '/api/images', userId || undefined);
 
     // Validate parameters
     if (!userId) {
-      console.log('[GET] /api/images - Missing userId parameter');
+      log.api.error('GET', '/api/images', new Error('Missing userId parameter'));
       return NextResponse.json({ success: false, error: 'User ID is required' }, { status: 400 });
     }
 
     if (!type || (type !== 'front' && type !== 'side')) {
-      console.log(`[GET] /api/images - Invalid type parameter: ${type}`);
+      log.api.error('GET', '/api/images', new Error(`Invalid type parameter: ${type}`));
       return NextResponse.json(
         { success: false, error: 'Valid photo type (front or side) is required' },
         { status: 400 }
@@ -26,13 +30,15 @@ export async function GET(request: Request) {
 
     // Path pattern for listing to find the exact file
     const pathPattern = `images/${userId}/${type}`;
-    console.log(`[GET] /api/images - Searching for blobs with prefix: ${pathPattern}`);
+    log.image.process(userId, pathPattern, 'search');
 
     const { blobs } = await list({ prefix: pathPattern });
-    console.log(`[GET] /api/images - Found ${blobs.length} matching blobs`);
 
     if (blobs.length > 0) {
-      console.log(`[GET] /api/images - Returning blob URL: ${blobs[0].url}`);
+      const duration = Date.now() - startTime;
+      log.api.response('GET', '/api/images', 200, duration);
+      log.user.action(userId, 'image_retrieved', { type, blobUrl: blobs[0].url });
+
       return NextResponse.json({
         success: true,
         imageUrl: blobs[0].url,
@@ -41,10 +47,14 @@ export async function GET(request: Request) {
     }
 
     // No image found
-    console.log(`[GET] /api/images - No image found for ${pathPattern}`);
+    const duration = Date.now() - startTime;
+    log.api.response('GET', '/api/images', 404, duration);
     return NextResponse.json({ success: false, error: 'Image not found' }, { status: 404 });
   } catch (error) {
-    console.error('[GET] /api/images - Error retrieving image:', error);
+    const duration = Date.now() - startTime;
+    log.api.error('GET', '/api/images', error as Error, userId || undefined);
+    log.api.response('GET', '/api/images', 500, duration);
+
     return NextResponse.json(
       { success: false, error: 'Failed to retrieve image' },
       { status: 500 }
@@ -54,31 +64,31 @@ export async function GET(request: Request) {
 
 // POST handler to upload images (both structured and general)
 export async function POST(request: Request) {
+  const startTime = Date.now();
+  let userId: string | null = null;
+
   try {
     // Parse multipart form data
     const formData = await request.formData();
-    const userId = formData.get('userId') as string;
+    userId = formData.get('userId') as string;
     const type = formData.get('type') as string;
     const file = formData.get('file') as File;
 
-    console.log(`[POST] /api/images - Uploading image for userId: ${userId}, type: ${type}`);
-    console.log(
-      `[POST] /api/images - File received: ${file?.name}, size: ${file?.size}, type: ${file?.type}`
-    );
+    log.api.request('POST', '/api/images', userId || undefined);
 
     // Validate parameters
     if (!userId) {
-      console.log('[POST] /api/images - Missing userId parameter');
+      log.api.error('POST', '/api/images', new Error('Missing userId parameter'));
       return NextResponse.json({ success: false, error: 'User ID is required' }, { status: 400 });
     }
 
     if (!type) {
-      console.log('[POST] /api/images - Missing type parameter');
+      log.api.error('POST', '/api/images', new Error('Missing type parameter'));
       return NextResponse.json({ success: false, error: 'Type is required' }, { status: 400 });
     }
 
     if (!file || !(file instanceof File)) {
-      console.log('[POST] /api/images - Missing or invalid file');
+      log.api.error('POST', '/api/images', new Error('Missing or invalid file'));
       return NextResponse.json(
         { success: false, error: 'Valid image file is required' },
         { status: 400 }
@@ -107,7 +117,7 @@ export async function POST(request: Request) {
       blobPath = `images/${userId}/${timestamp}-${random}-${file.name}`;
     }
 
-    console.log(`[POST] /api/images - Uploading to blob path: ${blobPath}`);
+    log.image.upload(userId, file.name, file.size, file.type);
 
     // Upload to Vercel Blob Storage
     const result = await put(blobPath, file, {
@@ -117,7 +127,15 @@ export async function POST(request: Request) {
       allowOverwrite: true, // Allow overwriting existing files with the same name
     });
 
-    console.log(`[POST] /api/images - Upload successful. URL: ${result.url}`);
+    const duration = Date.now() - startTime;
+    log.api.response('POST', '/api/images', 200, duration);
+    log.user.action(userId, 'image_uploaded', {
+      type,
+      filename: file.name,
+      size: file.size,
+      blobPath,
+      resultUrl: result.url,
+    });
 
     // Return the successful response
     return NextResponse.json({
@@ -127,22 +145,27 @@ export async function POST(request: Request) {
       contentType: result.contentType,
     });
   } catch (error) {
-    console.error('[POST] /api/images - Error uploading image:', error);
+    const duration = Date.now() - startTime;
+    log.api.error('POST', '/api/images', error as Error, userId || undefined);
+    log.api.response('POST', '/api/images', 500, duration);
+
     return NextResponse.json({ success: false, error: 'Failed to upload image' }, { status: 500 });
   }
 }
 
 // DELETE handler to delete an image
 export async function DELETE(request: Request) {
-  try {
-    const { url, pathname, userId } = await request.json();
+  const startTime = Date.now();
+  let userId: string | null = null;
 
-    console.log(
-      `[DELETE] /api/images - Delete request for userId: ${userId}, pathname: ${pathname}`
-    );
+  try {
+    const { url, pathname, userId: requestUserId } = await request.json();
+    userId = requestUserId;
+
+    log.api.request('DELETE', '/api/images', userId || undefined);
 
     if (!url || !pathname) {
-      console.log('[DELETE] /api/images - Missing URL or pathname');
+      log.api.error('DELETE', '/api/images', new Error('Missing URL or pathname'));
       return NextResponse.json(
         { success: false, error: 'URL and pathname are required' },
         { status: 400 }
@@ -156,8 +179,11 @@ export async function DELETE(request: Request) {
 
     // If the userId from the request doesn't match the pathname's userId, reject the request
     if (userId && pathUserId && userId !== pathUserId) {
-      console.error(
-        `[DELETE] /api/images - User ${userId} attempted to delete image from user ${pathUserId}`
+      log.api.error(
+        'DELETE',
+        '/api/images',
+        new Error(`User ${userId} attempted to delete image from user ${pathUserId}`),
+        userId
       );
       return NextResponse.json(
         { success: false, error: 'You can only delete your own images' },
@@ -165,21 +191,26 @@ export async function DELETE(request: Request) {
       );
     }
 
-    console.log(
-      `[DELETE] /api/images - Deleting blob: ${pathname} for user: ${userId || 'unknown'}`
-    );
+    log.image.process(userId || 'unknown', pathname, 'delete');
 
     // Delete the blob using Vercel Blob API
     await del(pathname);
 
-    console.log(`[DELETE] /api/images - Successfully deleted blob: ${pathname}`);
+    const duration = Date.now() - startTime;
+    log.api.response('DELETE', '/api/images', 200, duration);
+    if (userId) {
+      log.user.action(userId, 'image_deleted', { pathname });
+    }
 
     return NextResponse.json({
       success: true,
       message: 'Image deleted successfully',
     });
   } catch (error) {
-    console.error('[DELETE] /api/images - Error deleting image:', error);
+    const duration = Date.now() - startTime;
+    log.api.error('DELETE', '/api/images', error as Error, userId || undefined);
+    log.api.response('DELETE', '/api/images', 500, duration);
+
     return NextResponse.json({ success: false, error: 'Failed to delete image' }, { status: 500 });
   }
 }

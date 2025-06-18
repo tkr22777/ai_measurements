@@ -5,6 +5,7 @@
 
 import { useState, useCallback } from 'react';
 import { prepareImageForUpload, uploadImageToServer } from '@/services/imageService';
+import { log } from '@/utils/logger';
 
 interface UseImageUploadReturn {
   isUploading: boolean;
@@ -21,13 +22,19 @@ export default function useImageUpload(): UseImageUploadReturn {
 
   const uploadImage = useCallback(
     async (imageDataUrl: string, userId: string, photoType: string): Promise<string | null> => {
+      const startTime = Date.now();
+
       // Step 1: Reset state
       setIsUploading(true);
       setUploadError(null);
 
+      log.user.action(userId, 'image_upload_start', { photoType });
+
       // Step 2: Prepare image for upload
       const prepareResult = prepareImageForUpload(imageDataUrl, userId, photoType);
       if (!prepareResult.success) {
+        const error = new Error(prepareResult.error!);
+        log.user.error(userId, 'image_prepare_failed', error);
         setUploadError(prepareResult.error!);
         setIsUploading(false);
         return null;
@@ -36,14 +43,24 @@ export default function useImageUpload(): UseImageUploadReturn {
       // Step 3: Upload to server
       const uploadResult = await uploadImageToServer(prepareResult.data!.formData);
       if (!uploadResult.success) {
+        const error = new Error(uploadResult.error!);
+        log.user.error(userId, 'image_upload_failed', error);
         setUploadError(uploadResult.error!);
         setIsUploading(false);
         return null;
       }
 
       // Step 4: Update success state
+      const duration = Date.now() - startTime;
       setUploadedImageUrl(uploadResult.data!);
       setIsUploading(false);
+
+      log.user.action(userId, 'image_upload_success', {
+        photoType,
+        duration,
+        imageUrl: uploadResult.data!,
+      });
+
       return uploadResult.data!;
     },
     []
