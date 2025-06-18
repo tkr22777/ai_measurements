@@ -2,6 +2,7 @@
 
 import PhotoSpot from './PhotoSpot';
 import usePhotoSpots from './usePhotoSpots';
+import { cn, styles } from '@/utils/styles';
 import type { PhotoSpotsProps } from './types';
 
 export default function PhotoSpots({ onTakePhoto }: PhotoSpotsProps) {
@@ -13,10 +14,15 @@ export default function PhotoSpots({ onTakePhoto }: PhotoSpotsProps) {
   if (isLoading) {
     return (
       <div className="w-full my-6">
-        <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Body Photos</h2>
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-          <div className="w-full h-64 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-blue-200 dark:border-blue-900 rounded-full border-l-blue-600 animate-spin"></div>
+        <h2 className={cn(styles.text.heading, 'text-lg mb-4')}>Body Photos</h2>
+        <div className={cn(styles.layout.center, 'flex-col sm:flex-row gap-4')}>
+          <div
+            className={cn(
+              styles.layout.center,
+              'w-full h-64 bg-gray-100 dark:bg-gray-800 rounded-lg'
+            )}
+          >
+            <div className={cn(styles.loading.spinner, 'w-8 h-8 border-l-blue-600')}></div>
           </div>
         </div>
       </div>
@@ -25,7 +31,7 @@ export default function PhotoSpots({ onTakePhoto }: PhotoSpotsProps) {
 
   return (
     <div className="w-full my-6">
-      <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Body Photos</h2>
+      <h2 className={cn(styles.text.heading, 'text-lg mb-4')}>Body Photos</h2>
 
       <div className="flex flex-col sm:flex-row gap-4">
         <PhotoSpot type="front" photoUrl={frontPhoto} onPhotoClick={handlePhotoClick} />

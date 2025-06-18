@@ -2,6 +2,7 @@
 
 import PhotoDisplay from './PhotoDisplay';
 import useSimpleImageDisplay from './useSimpleImageDisplay';
+import { cn, styles } from '@/utils/styles';
 
 const PLACEHOLDER_IMAGE = '/placeholder-image.svg';
 
@@ -19,8 +20,8 @@ export default function SimpleImageDisplay() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-4">
-        <div className="w-6 h-6 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin mr-2"></div>
+      <div className={cn(styles.layout.center, 'p-4')}>
+        <div className={cn(styles.loading.spinner, 'w-6 h-6 border-t-blue-500 mr-2')}></div>
         <span>Loading photos...</span>
       </div>
     );
@@ -28,7 +29,7 @@ export default function SimpleImageDisplay() {
 
   if (!frontPhotoUrl && !sidePhotoUrl && !error) {
     return (
-      <div className="p-4 text-center text-gray-500 border border-gray-200 rounded-md">
+      <div className={cn(styles.text.muted, 'p-4 text-center border border-gray-200 rounded-md')}>
         Please enter a user ID above and click Submit to view photos
       </div>
     );
@@ -36,7 +37,7 @@ export default function SimpleImageDisplay() {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">Simple Image Display</h2>
+      <h2 className={cn(styles.text.heading, 'text-xl mb-4')}>Simple Image Display</h2>
 
       {error && <div className="p-3 mb-4 bg-red-100 text-red-700 rounded-md">Error: {error}</div>}
 

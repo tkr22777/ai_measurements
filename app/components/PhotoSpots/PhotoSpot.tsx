@@ -1,3 +1,4 @@
+import { cn, styles } from '@/utils/styles';
 import type { PhotoSpotProps } from './types';
 
 const CameraIcon = () => (
@@ -27,24 +28,25 @@ export default function PhotoSpot({ type, photoUrl, onPhotoClick }: PhotoSpotPro
   const displayName = type === 'front' ? 'Front View' : 'Side View';
 
   return (
-    <div className="flex-1 flex flex-col items-center">
+    <div className={cn(styles.layout.centerCol, 'flex-1')}>
       <div
-        className="w-full h-64 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden relative cursor-pointer hover:opacity-90 transition-opacity"
+        className={cn(
+          'w-full h-64 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden relative cursor-pointer transition-opacity',
+          'hover:opacity-90'
+        )}
         onClick={() => onPhotoClick(type)}
       >
         {photoUrl ? (
           <img src={photoUrl} alt={displayName} className="w-full h-full object-cover" />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
+          <div className={cn(styles.layout.centerCol, 'h-full text-gray-500 dark:text-gray-400')}>
             <CameraIcon />
-            <span className="text-sm">{displayName}</span>
+            <span className={styles.text.small}>{displayName}</span>
             <span className="text-xs mt-1">Tap to add photo</span>
           </div>
         )}
       </div>
-      <span className="text-sm font-medium mt-2 text-gray-700 dark:text-gray-300">
-        {displayName}
-      </span>
+      <span className={cn(styles.text.small, 'font-medium mt-2')}>{displayName}</span>
     </div>
   );
 }
