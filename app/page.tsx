@@ -33,8 +33,18 @@ export default function Home() {
   // Use the shared user context instead of component-specific state
   const { userId, setUserId } = useUser();
 
-  // Handle taking a photo for a specific type
-  const handleTakePhoto = (type: 'front' | 'side') => {
+  // Handle taking a photo - simplified since user chooses type after capture
+  const handleTakePhoto = () => {
+    if (!userId) {
+      alert('Please enter a User ID first');
+      return;
+    }
+    setCurrentPhotoType('front'); // Default, but user can change in preview
+    requestCameraPermission();
+  };
+
+  // Handle taking a photo for a specific type (still used by PhotoSpots)
+  const handleTakePhotoType = (type: 'front' | 'side') => {
     if (!userId) {
       alert('Please enter a User ID first');
       return;
@@ -80,8 +90,29 @@ export default function Home() {
           </div>
         ) : !isCapturing && !localCapturedImage ? (
           <div className="w-full">
-            <h2 className={cn(styles.text.heading, 'text-xl mb-4')}>Take New Photos</h2>
-            <PhotoSpots onTakePhoto={handleTakePhoto} />
+            {/* Simple Take Photo Button */}
+            <div className="mb-6">
+              <h2 className={cn(styles.text.heading, 'text-xl mb-4')}>Take New Photo</h2>
+              <button
+                onClick={handleTakePhoto}
+                className={cn(
+                  styles.button.base,
+                  styles.button.primary,
+                  'w-full py-4 text-lg font-medium'
+                )}
+              >
+                📸 Take Photo
+              </button>
+              <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+                You can choose whether it&apos;s a front or side photo after taking it
+              </p>
+            </div>
+
+            {/* Photo Spots - Alternative way to take photos */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h2 className={cn(styles.text.heading, 'text-xl mb-4')}>Or Browse Your Photos</h2>
+              <PhotoSpots onTakePhoto={handleTakePhotoType} />
+            </div>
           </div>
         ) : isCapturing ? (
           <Camera onPhotoCapture={handlePhotoCapture} />
@@ -95,7 +126,7 @@ export default function Home() {
             uploadedImageUrl={uploadedImageUrl}
             userId={userId}
             onUserChange={setUserId}
-            photoType={currentPhotoType as 'front' | 'side'}
+            photoType={(currentPhotoType as 'front' | 'side') || 'front'}
           />
         ) : null}
 

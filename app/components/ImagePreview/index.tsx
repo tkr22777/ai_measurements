@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { cn, styles } from '@/utils/styles';
 
@@ -25,9 +25,12 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   onUserChange,
   photoType = 'front',
 }) => {
+  // Local state for selected photo type - user can change this
+  const [selectedPhotoType, setSelectedPhotoType] = useState<'front' | 'side'>(photoType);
+
   const handleUpload = async () => {
     try {
-      await onUpload(photoType);
+      await onUpload(selectedPhotoType);
     } catch (error) {
       console.error('Error in handleUpload:', error);
     }
@@ -43,26 +46,53 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
         className="w-full max-h-[70vh] object-contain rounded-lg mb-4 shadow-sm"
       />
 
-      {/* Photo type indicator */}
+      {/* Photo type selector */}
       <div
         className={cn(
-          'bg-blue-50 dark:bg-blue-900/20 rounded-md p-3 mb-4 w-full text-center',
+          'bg-blue-50 dark:bg-blue-900/20 rounded-md p-4 mb-4 w-full',
           'border border-blue-200 dark:border-blue-700'
         )}
       >
-        <p className="text-blue-700 dark:text-blue-300 font-medium">
-          📸 {photoType === 'front' ? 'Front' : 'Side'} Photo
+        <p className="text-blue-700 dark:text-blue-300 font-medium mb-3 text-center">
+          📸 Select Photo Type
         </p>
-        <p className="text-blue-600 dark:text-blue-400 text-sm mt-1">
+        <p className="text-blue-600 dark:text-blue-400 text-sm mb-3 text-center">
           User: <span className="font-semibold">{userId}</span>
         </p>
+
+        {/* Radio button selector */}
+        <div className="flex justify-center gap-6">
+          <label className="flex items-center cursor-pointer">
+            <input
+              type="radio"
+              name="photoType"
+              value="front"
+              checked={selectedPhotoType === 'front'}
+              onChange={(e) => setSelectedPhotoType(e.target.value as 'front' | 'side')}
+              className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <span className="text-blue-700 dark:text-blue-300 font-medium">🫅 Front View</span>
+          </label>
+
+          <label className="flex items-center cursor-pointer">
+            <input
+              type="radio"
+              name="photoType"
+              value="side"
+              checked={selectedPhotoType === 'side'}
+              onChange={(e) => setSelectedPhotoType(e.target.value as 'front' | 'side')}
+              className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <span className="text-blue-700 dark:text-blue-300 font-medium">👤 Side View</span>
+          </label>
+        </div>
       </div>
 
       {uploadedImageUrl ? (
         <div className="mt-2 w-full text-center">
           <div className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-md p-3 mb-4">
             <p className="font-medium">
-              ✅ {photoType === 'front' ? 'Front' : 'Side'} photo uploaded successfully!
+              ✅ {selectedPhotoType === 'front' ? 'Front' : 'Side'} photo uploaded successfully!
             </p>
             <a
               href={uploadedImageUrl}
@@ -81,7 +111,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
         <div className="mt-2 w-full text-center">
           <div className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-md p-3 mb-4">
             <p className="font-medium">
-              ❌ {photoType === 'front' ? 'Front' : 'Side'} photo upload failed
+              ❌ {selectedPhotoType === 'front' ? 'Front' : 'Side'} photo upload failed
             </p>
             <p className="text-sm mt-1">{uploadError}</p>
           </div>
@@ -133,10 +163,10 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                Uploading {photoType === 'front' ? 'Front' : 'Side'} Photo...
+                Uploading {selectedPhotoType === 'front' ? 'Front' : 'Side'} Photo...
               </span>
             ) : (
-              `Upload ${photoType === 'front' ? 'Front' : 'Side'} Photo`
+              `Upload as ${selectedPhotoType === 'front' ? 'Front' : 'Side'} Photo`
             )}
           </button>
         </div>
