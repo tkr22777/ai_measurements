@@ -3,6 +3,7 @@ import useCamera from './useCamera';
 import usePhotoCapture from './usePhotoCapture';
 import useImageUpload from './useImageUpload';
 import { useUser } from '@/components/UserContext';
+import { log } from '@/utils/logger';
 
 interface UseCameraAppReturn {
   isClient: boolean;
@@ -40,28 +41,29 @@ export default function useCameraApp(): UseCameraAppReturn {
   // Client initialization effect
   useEffect(() => {
     setIsClient(true);
-    console.log('Camera app initialized on client');
+    log.app.start();
   }, []);
 
   // Camera permission effect
   useEffect(() => {
     if (hasPermission === true && !isLoading) {
       setIsCapturing(true);
-      console.log('Camera permission granted, ready to capture');
+      log.user.action(userId, 'camera_permission_granted', { photoType: currentPhotoType });
     } else if (hasPermission === false) {
       setIsCapturing(false);
-      console.log('Camera permission denied');
+      log.user.action(userId, 'camera_permission_denied', { photoType: currentPhotoType });
     }
-  }, [hasPermission, isLoading]);
+  }, [hasPermission, isLoading, userId, currentPhotoType]);
 
   // Upload function - now much simpler
   const uploadToServer = useCallback(
     async (photoType: string): Promise<string | null> => {
       if (!localCapturedImage) {
-        console.log('No image available to upload');
+        log.user.error(userId, 'upload_no_image', new Error('No image available to upload'));
         return null;
       }
 
+      log.user.action(userId, 'upload_start', { photoType });
       return uploadImage(localCapturedImage, userId, photoType);
     },
     [localCapturedImage, userId, uploadImage]
@@ -69,19 +71,22 @@ export default function useCameraApp(): UseCameraAppReturn {
 
   // Retake handler
   const handleRetake = useCallback(() => {
-    console.log('Retaking photo');
+    log.user.action(userId, 'photo_retake', { photoType: currentPhotoType });
     setLocalCapturedImage(null);
     resetUploadState();
     resetPhoto();
     requestCameraPermission();
-  }, [resetUploadState, resetPhoto, requestCameraPermission]);
+  }, [resetUploadState, resetPhoto, requestCameraPermission, userId, currentPhotoType]);
 
   // Photo capture handler
-  const handlePhotoCapture = useCallback((imageUrl: string) => {
-    console.log('Photo captured successfully');
-    setIsCapturing(false);
-    setLocalCapturedImage(imageUrl);
-  }, []);
+  const handlePhotoCapture = useCallback(
+    (imageUrl: string) => {
+      log.user.action(userId, 'photo_captured', { photoType: currentPhotoType });
+      setIsCapturing(false);
+      setLocalCapturedImage(imageUrl);
+    },
+    [userId, currentPhotoType]
+  );
 
   return {
     isClient,

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@/components/UserContext';
+import { log } from '@/utils/logger';
 import type { PhotoSpotState, PhotoType } from './types';
 
 interface UsePhotoSpotsReturn extends PhotoSpotState {
@@ -27,7 +28,7 @@ export default function usePhotoSpots(
       setIsLoading(true);
 
       try {
-        console.log(`Fetching photos for user: ${userId}`);
+        log.user.action(userId, 'photos_fetch_start', { types: ['front', 'side'] });
 
         // Fetch front photo
         const frontResponse = await fetch(
@@ -35,9 +36,12 @@ export default function usePhotoSpots(
         );
         if (frontResponse.ok) {
           const frontData = await frontResponse.json();
-          setFrontPhoto(frontData.success && frontData.imageUrl ? frontData.imageUrl : null);
+          const frontUrl = frontData.success && frontData.imageUrl ? frontData.imageUrl : null;
+          setFrontPhoto(frontUrl);
+          log.user.action(userId, 'photo_loaded', { type: 'front', hasPhoto: !!frontUrl });
         } else {
           setFrontPhoto(null);
+          log.user.action(userId, 'photo_not_found', { type: 'front' });
         }
 
         // Fetch side photo
@@ -46,12 +50,17 @@ export default function usePhotoSpots(
         );
         if (sideResponse.ok) {
           const sideData = await sideResponse.json();
-          setSidePhoto(sideData.success && sideData.imageUrl ? sideData.imageUrl : null);
+          const sideUrl = sideData.success && sideData.imageUrl ? sideData.imageUrl : null;
+          setSidePhoto(sideUrl);
+          log.user.action(userId, 'photo_loaded', { type: 'side', hasPhoto: !!sideUrl });
         } else {
           setSidePhoto(null);
+          log.user.action(userId, 'photo_not_found', { type: 'side' });
         }
       } catch (error) {
-        console.error('Error loading photos:', error);
+        log.user.error(userId, 'photos_fetch_failed', error as Error);
+        setFrontPhoto(null);
+        setSidePhoto(null);
       } finally {
         setIsLoading(false);
       }
@@ -61,6 +70,7 @@ export default function usePhotoSpots(
   }, [userId]);
 
   const handlePhotoClick = (type: PhotoType) => {
+    log.user.action(userId, 'photo_spot_clicked', { type });
     if (onTakePhoto) {
       onTakePhoto(type);
     }

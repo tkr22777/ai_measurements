@@ -43,24 +43,27 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
         className="w-full max-h-[70vh] object-contain rounded-lg mb-4 shadow-sm"
       />
 
-      {/* User info banner */}
-      {!uploadedImageUrl && (
-        <div
-          className={cn(
-            'bg-blue-50 dark:bg-blue-900/20 rounded-md p-2 mb-4 w-full text-center',
-            'text-sm text-blue-700 dark:text-blue-300'
-          )}
-        >
-          <p>
-            Uploading as: <span className="font-semibold ml-1">{userId}</span>
-          </p>
-        </div>
-      )}
+      {/* Photo type indicator */}
+      <div
+        className={cn(
+          'bg-blue-50 dark:bg-blue-900/20 rounded-md p-3 mb-4 w-full text-center',
+          'border border-blue-200 dark:border-blue-700'
+        )}
+      >
+        <p className="text-blue-700 dark:text-blue-300 font-medium">
+          📸 {photoType === 'front' ? 'Front' : 'Side'} Photo
+        </p>
+        <p className="text-blue-600 dark:text-blue-400 text-sm mt-1">
+          User: <span className="font-semibold">{userId}</span>
+        </p>
+      </div>
 
       {uploadedImageUrl ? (
         <div className="mt-2 w-full text-center">
           <div className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-md p-3 mb-4">
-            <p className="font-medium">Upload successful!</p>
+            <p className="font-medium">
+              ✅ {photoType === 'front' ? 'Front' : 'Side'} photo uploaded successfully!
+            </p>
             <a
               href={uploadedImageUrl}
               target="_blank"
@@ -77,7 +80,9 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
       ) : uploadError ? (
         <div className="mt-2 w-full text-center">
           <div className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-md p-3 mb-4">
-            <p className="font-medium">Upload failed</p>
+            <p className="font-medium">
+              ❌ {photoType === 'front' ? 'Front' : 'Side'} photo upload failed
+            </p>
             <p className="text-sm mt-1">{uploadError}</p>
           </div>
           <div className="flex justify-center gap-4 mt-2 w-full">
@@ -128,10 +133,10 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                Uploading...
+                Uploading {photoType === 'front' ? 'Front' : 'Side'} Photo...
               </span>
             ) : (
-              'Upload to Server'
+              `Upload ${photoType === 'front' ? 'Front' : 'Side'} Photo`
             )}
           </button>
         </div>
