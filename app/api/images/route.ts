@@ -52,7 +52,7 @@ export async function GET(request: Request) {
   }
 }
 
-// POST handler to upload a new image by type
+// POST handler to upload images (both structured and general)
 export async function POST(request: Request) {
   try {
     // Parse multipart form data
@@ -72,12 +72,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'User ID is required' }, { status: 400 });
     }
 
-    if (!type || (type !== 'front' && type !== 'side')) {
-      console.log(`[POST] /api/images - Invalid type parameter: ${type}`);
-      return NextResponse.json(
-        { success: false, error: 'Valid photo type (front or side) is required' },
-        { status: 400 }
-      );
+    if (!type) {
+      console.log('[POST] /api/images - Missing type parameter');
+      return NextResponse.json({ success: false, error: 'Type is required' }, { status: 400 });
     }
 
     if (!file || !(file instanceof File)) {
@@ -97,8 +94,19 @@ export async function POST(request: Request) {
       }
     }
 
-    // Define the blob path with the appropriate extension
-    const blobPath = `images/${userId}/${type}.${fileExtension}`;
+    let blobPath: string;
+
+    // Handle structured uploads (front/side) vs general uploads
+    if (type === 'front' || type === 'side') {
+      // Structured naming for camera app
+      blobPath = `images/${userId}/${type}.${fileExtension}`;
+    } else {
+      // General uploads with timestamp for uniqueness
+      const timestamp = new Date().toISOString().replace(/[-:.]/g, '');
+      const random = Math.random().toString(36).substring(2, 10);
+      blobPath = `images/${userId}/${timestamp}-${random}-${file.name}`;
+    }
+
     console.log(`[POST] /api/images - Uploading to blob path: ${blobPath}`);
 
     // Upload to Vercel Blob Storage
@@ -114,7 +122,7 @@ export async function POST(request: Request) {
     // Return the successful response
     return NextResponse.json({
       success: true,
-      message: `${type} photo uploaded successfully`,
+      message: `${type} image uploaded successfully`,
       imageUrl: result.url,
       contentType: result.contentType,
     });

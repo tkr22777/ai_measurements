@@ -45,6 +45,12 @@
 - Include: setup, env vars, scripts, status, API endpoints
 - No marketing copy, deployment details, or verbose explanations
 
+## API Design
+- Consolidate CRUD operations into single REST endpoints
+- Use proper HTTP methods: GET, POST, PUT/PATCH, DELETE
+- Never create separate endpoints for operations on same resource
+- Example: `/api/images` handles GET, POST, DELETE - not `/api/upload`, `/api/delete-image`
+
 ## Cursor Rules Management
 - Never modify content above boundary line
 - Add new rules below with clear section headers 

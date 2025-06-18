@@ -53,11 +53,11 @@ export default function ImageUploader() {
       // Create FormData
       const formData = new FormData();
       formData.append('file', selectedFile);
-      // Include the userId in the form data
       formData.append('userId', userId);
+      formData.append('type', 'general'); // Use 'general' type for generic uploads
 
-      // Send to the API
-      const response = await fetch('/api/upload', {
+      // Send to the consolidated API
+      const response = await fetch('/api/images', {
         method: 'POST',
         body: formData,
       });
@@ -115,57 +115,54 @@ export default function ImageUploader() {
   }, []);
 
   return (
-    <div className="uploader-container">
-      <h2>Upload Image</h2>
+    <div className="image-uploader-container">
+      <h2>Upload Images</h2>
 
-      <div className="user-info-banner">
-        <p>
-          Uploading as: <span className="user-id">{userId}</span>
-        </p>
-      </div>
-
-      <div className="drop-area" onDrop={handleDrop} onDragOver={handleDragOver}>
+      {/* Drag and drop area */}
+      <div
+        className="upload-area"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onClick={() => fileInputRef.current?.click()}
+      >
         {preview ? (
           <div className="preview-container">
-            <img src={preview} alt="Preview" className="image-preview" />
-            <button
-              className="cancel-button"
-              onClick={() => {
-                setSelectedFile(null);
-                setPreview(null);
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = '';
-                }
-              }}
-            >
-              Cancel
-            </button>
+            <img src={preview} alt="Preview" className="preview-image" />
+            <p className="preview-text">Click to change or drag another image</p>
           </div>
         ) : (
           <div className="upload-placeholder">
-            <p>Drag & drop an image here, or click to select</p>
-            <input
-              ref={fileInputRef}
-              type="file"
-              onChange={handleFileChange}
-              accept="image/*"
-              className="file-input"
-            />
+            <p>Click to select an image or drag and drop here</p>
+            <p className="upload-hint">Supports JPEG, PNG, WebP</p>
           </div>
         )}
       </div>
 
-      {uploadError && <div className="error-message">{uploadError}</div>}
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        style={{ display: 'none' }}
+      />
 
-      {uploadSuccess && <div className="success-message">Image uploaded successfully!</div>}
+      {/* Upload button */}
+      {selectedFile && (
+        <div className="upload-controls">
+          <button
+            onClick={handleUpload}
+            disabled={uploading}
+            className={`upload-button ${uploading ? 'uploading' : ''}`}
+          >
+            {uploading ? 'Uploading...' : 'Upload Image'}
+          </button>
+        </div>
+      )}
 
-      <button
-        onClick={handleUpload}
-        disabled={!selectedFile || uploading}
-        className="upload-button"
-      >
-        {uploading ? 'Uploading...' : 'Upload Image'}
-      </button>
+      {/* Status messages */}
+      {uploadError && <div className="upload-error">{uploadError}</div>}
+      {uploadSuccess && <div className="upload-success">Image uploaded successfully!</div>}
     </div>
   );
 }
