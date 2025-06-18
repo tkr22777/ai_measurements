@@ -5,7 +5,7 @@ import ImagePreview from '@/components/ImagePreview';
 import PermissionRequest from '@/components/PermissionRequest';
 import AppInfo from '@/components/AppInfo';
 import PhotoSpots from '@/components/PhotoSpots';
-import UserIdInput from '@/components/UserIdInput';
+import UserInput from '@/components/UserInput';
 import BodyMeasurement from '@/components/BodyMeasurement';
 import SimpleImageDisplay from '@/components/SimpleImageDisplay';
 import useCameraApp from '@/hooks/useCameraApp';
@@ -65,7 +65,7 @@ export default function Home() {
         </h1>
 
         {/* User ID Input Form */}
-        <UserIdInput />
+        <UserInput />
 
         {/* Camera Interface - Conditionally shown */}
         {!isClient ? (
