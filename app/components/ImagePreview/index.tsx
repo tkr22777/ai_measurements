@@ -10,7 +10,6 @@ interface ImagePreviewProps {
   uploadError?: string | null;
   uploadedImageUrl?: string | null;
   userId?: string;
-  onUserChange?: (userId: string) => void;
   photoType?: 'front' | 'side';
 }
 
@@ -22,7 +21,6 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   uploadError = null,
   uploadedImageUrl = null,
   userId = 'user1',
-  onUserChange,
   photoType = 'front',
 }) => {
   // Local state for selected photo type - user can change this

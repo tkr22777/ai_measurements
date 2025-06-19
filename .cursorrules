@@ -79,6 +79,14 @@
 - **No complex mapping**: Avoid email-to-ID mapping tables or complex lookups
 - **Blob storage**: User metadata stored as `users/{userId}/metadata.json`
 
+## Testing Standards
+- **Framework**: Jest + React Testing Library for comprehensive testing
+- **Priority**: Pure functions first, then services, hooks, components
+- **Coverage**: 70%+ for functions, branches, lines on business logic
+- **Mocking**: Mock external dependencies (fetch, Vercel Blob, Next.js router)
+- **Structure**: `__tests__/` directory mirroring `app/` structure
+- **Focus**: Test business logic, error handling, edge cases
+
 ## Cursor Rules Management
 - Never modify content above boundary line
 - Add new rules below with clear section headers 

@@ -25,7 +25,7 @@ export default function CameraPage() {
     setCurrentPhotoType,
   } = useCameraApp();
 
-  const { userId, setUserId } = useUser();
+  const { userId } = useUser();
 
   // Handle taking a photo - simplified since user chooses type after capture
   const handleTakePhoto = () => {
@@ -101,7 +101,6 @@ export default function CameraPage() {
           uploadError={uploadError}
           uploadedImageUrl={uploadedImageUrl}
           userId={userId}
-          onUserChange={setUserId}
           photoType={(currentPhotoType as 'front' | 'side') || 'front'}
         />
       ) : null}

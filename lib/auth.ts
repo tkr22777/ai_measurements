@@ -3,6 +3,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { isEmailRegistered } from './userService';
+import logger from '../app/utils/logger';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -83,14 +84,14 @@ export const authOptions: NextAuthOptions = {
           } catch (error) {
             // If user creation fails (maybe already exists), just continue
             // In a real app, you'd handle this more gracefully
-            console.error('Error creating OAuth user:', error);
+            logger.error({ email: user.email, error }, 'Error creating OAuth user');
             return false;
           }
         }
 
         return true;
       } catch (error) {
-        console.error('Error in signIn callback:', error);
+        logger.error({ email: user.email, error }, 'Error in signIn callback');
         return false;
       }
     },
