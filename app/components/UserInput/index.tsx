@@ -1,109 +1,148 @@
 'use client';
 
-import { useState } from 'react';
+import { signOut, useSession } from 'next-auth/react';
 import { useUser } from '@/components/UserContext';
 import { cn, styles } from '@/utils/styles';
-import type { UserInputProps } from './types';
 
-export default function UserInput({
-  placeholder = 'Enter User ID',
-  maxLength = 50,
-}: UserInputProps = {}) {
-  const { userId, setUserId } = useUser();
-  const [tempUserId, setTempUserId] = useState(userId);
-  const [isEditing, setIsEditing] = useState(!userId);
+export default function UserInput() {
+  const { data: session } = useSession();
+  const { userId, userEmail, userName, userImage, userMetadata, loading } = useUser();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (tempUserId.trim()) {
-      setUserId(tempUserId.trim());
-      setIsEditing(false);
-    }
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/auth/signin' });
   };
 
-  const handleEdit = () => {
-    setTempUserId(userId);
-    setIsEditing(true);
-  };
-
-  const handleCancel = () => {
-    setTempUserId(userId);
-    setIsEditing(false);
-  };
-
-  if (!isEditing && userId) {
+  if (loading) {
     return (
-      <div
-        className={cn(
-          'w-full max-w-md mx-auto mb-6 p-4 border rounded-lg',
-          'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-        )}
-      >
-        <div className={styles.layout.between}>
-          <div>
-            <p className="text-sm text-green-700 dark:text-green-300">User ID:</p>
-            <p className="font-medium text-green-800 dark:text-green-200">{userId}</p>
-          </div>
-          <button
-            onClick={handleEdit}
-            className={cn(
-              styles.button.base,
-              'px-3 py-1 text-sm bg-green-600 text-white hover:bg-green-700'
-            )}
-          >
-            Edit
-          </button>
+      <div className={cn(styles.card.base, styles.card.padding, 'max-w-md mx-auto mb-6')}>
+        <div className={cn(styles.layout.center, 'py-4')}>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-2"></div>
+          <p className={cn(styles.text.body, 'text-gray-600 dark:text-gray-300')}>
+            Loading user data...
+          </p>
         </div>
       </div>
     );
   }
 
+  if (!session) {
+    return (
+      <div className={cn(styles.card.base, styles.card.padding, 'max-w-md mx-auto mb-6')}>
+        <p className={cn(styles.text.body, 'text-center text-gray-600 dark:text-gray-300')}>
+          No user session found
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full max-w-md mx-auto mb-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="userId" className={cn(styles.text.small, 'block font-medium mb-2')}>
-            User ID
-          </label>
-          <input
-            type="text"
-            id="userId"
-            value={tempUserId}
-            onChange={(e) => setTempUserId(e.target.value)}
-            placeholder={placeholder}
-            maxLength={maxLength}
-            className={cn(
-              'w-full px-3 py-2 border rounded-md shadow-sm bg-white dark:bg-gray-800',
-              'border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-            )}
-            required
-            autoFocus
+    <div className={cn(styles.card.base, styles.card.padding, 'max-w-md mx-auto mb-6')}>
+      {/* User Avatar */}
+      <div className="flex items-center space-x-4 mb-4">
+        {userImage ? (
+          <img
+            src={userImage}
+            alt={userName || 'User'}
+            className="w-12 h-12 rounded-full object-cover"
           />
+        ) : (
+          <div
+            className={cn(styles.layout.center, 'w-12 h-12 bg-blue-500 text-white rounded-full')}
+          >
+            <span className="text-lg font-semibold">
+              {userName ? userName.charAt(0).toUpperCase() : '👤'}
+            </span>
+          </div>
+        )}
+        <div>
+          <h3 className={cn(styles.text.body, 'font-semibold')}>{userName || 'User'}</h3>
+          <p className={cn(styles.text.small, 'text-gray-600 dark:text-gray-400')}>
+            {userEmail || 'No email'}
+          </p>
         </div>
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            disabled={!tempUserId.trim()}
+      </div>
+
+      {/* User Details */}
+      <div className="space-y-3 mb-4">
+        <div>
+          <label
+            className={cn(styles.text.small, 'block font-medium text-gray-700 dark:text-gray-300')}
+          >
+            Generated User ID
+          </label>
+          <div
             className={cn(
-              styles.button.base,
-              styles.button.primary,
-              'flex-1 disabled:opacity-50 disabled:cursor-not-allowed'
+              'mt-1 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-md',
+              'border border-gray-200 dark:border-gray-600'
             )}
           >
-            {userId ? 'Update' : 'Set User ID'}
-          </button>
-          {userId && (
-            <button
-              type="button"
-              onClick={handleCancel}
-              className={cn(styles.button.base, styles.button.secondary)}
-            >
-              Cancel
-            </button>
-          )}
+            <code className={cn(styles.text.small, 'text-gray-800 dark:text-gray-200')}>
+              {userId}
+            </code>
+          </div>
+          <p className={cn(styles.text.small, 'text-gray-500 dark:text-gray-400 mt-1')}>
+            This unique ID is used for all API calls and photo storage
+          </p>
         </div>
-      </form>
+
+        {userMetadata && (
+          <>
+            <div>
+              <label
+                className={cn(
+                  styles.text.small,
+                  'block font-medium text-gray-700 dark:text-gray-300'
+                )}
+              >
+                Account Created
+              </label>
+              <div
+                className={cn(
+                  'mt-1 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-md',
+                  'border border-gray-200 dark:border-gray-600'
+                )}
+              >
+                <span className={cn(styles.text.small, 'text-gray-800 dark:text-gray-200')}>
+                  {new Date(userMetadata.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label
+                className={cn(
+                  styles.text.small,
+                  'block font-medium text-gray-700 dark:text-gray-300'
+                )}
+              >
+                Authentication Provider
+              </label>
+              <div
+                className={cn(
+                  'mt-1 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-md',
+                  'border border-gray-200 dark:border-gray-600'
+                )}
+              >
+                <span className={cn(styles.text.small, 'text-gray-800 dark:text-gray-200')}>
+                  {userMetadata.provider === 'oauth' ? 'OAuth Provider' : 'Development Login'}
+                </span>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Sign Out Button */}
+      <button
+        onClick={handleSignOut}
+        className={cn(
+          styles.button.base,
+          'w-full py-2 bg-red-600 text-white hover:bg-red-700',
+          'transition-colors duration-200'
+        )}
+      >
+        Sign Out
+      </button>
     </div>
   );
 }

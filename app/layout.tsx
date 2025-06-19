@@ -1,20 +1,20 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { UserProvider } from '@/components/UserContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { NavProvider } from '@/components/Navigation';
+import AuthProvider from '@/components/Providers/AuthProvider';
+import LayoutWrapper from '@/components/LayoutWrapper';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Mobile Camera App',
-  description: 'Capture photos from your mobile device camera',
+  title: 'Body Measurement App',
+  description: 'Secure body measurement app with camera capture',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Camera',
+    title: 'Body Measurement',
   },
   icons: {
     icon: '/icons/favicon.svg',
@@ -39,9 +39,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={inter.className}>
         <ErrorBoundary>
-          <NavProvider>
-            <UserProvider>{children}</UserProvider>
-          </NavProvider>
+          <AuthProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </AuthProvider>
         </ErrorBoundary>
       </body>
     </html>
