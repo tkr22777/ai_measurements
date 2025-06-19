@@ -66,12 +66,18 @@
 - **Modular imports**: Clean import paths using directory structure
 
 ## Logging Standards
-- **Library**: Use Pino with `utils/logger.ts` - beautiful colors in dev, structured JSON in production
+- **Library**: Custom logger in `utils/logger.ts` - beautiful colors in dev, structured JSON in production
 - **No console.log**: Replace all console statements with proper logging
 - **Structured logging**: Use `log.api`, `log.user`, `log.image`, `log.app` helpers
 - **Performance tracking**: Include duration for API calls and operations
 - **Error context**: Always include userId, operation context in error logs
 - **Usage**: `log.api.request('POST', '/api/images', userId)`, `log.user.action(userId, 'upload', metadata)`
+
+## User Management Standards
+- **ID-based system**: Use user IDs for all operations, avoid email lookups
+- **Simple authentication**: OAuth creates users, credentials validate existing emails
+- **No complex mapping**: Avoid email-to-ID mapping tables or complex lookups
+- **Blob storage**: User metadata stored as `users/{userId}/metadata.json`
 
 ## Cursor Rules Management
 - Never modify content above boundary line
