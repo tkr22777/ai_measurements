@@ -1,6 +1,6 @@
 # Body Measurement Camera App
 
-React + Next.js + TypeScript camera app for body measurements.
+React + Next.js + TypeScript camera app for body measurements with Vercel authentication.
 
 ## Setup
 
@@ -25,47 +25,54 @@ BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
 - `npm run verify` - Test core functionality
 - `npm run format` - Format code
 
-## Multi-Page Navigation Plan
+## Authentication Implementation Plan
 
-**Converting from single-page to multi-page app with URL + state navigation**
+**Adding NextAuth.js authentication to replace manual User ID system**
 
-### Phase 1: Navigation Infrastructure ✅
+### Phase 1: Authentication Setup ⏳
 
-- [x] Create Next.js App Router structure
-- [x] Build navigation state manager (NavProvider)
-- [x] Add navigation bar component
-- [x] Create consistent page layout wrapper
+- [ ] Install and configure NextAuth.js
+- [ ] Setup Google and GitHub OAuth providers
+- [ ] Create authentication API routes
+- [ ] Add environment variables for auth providers
 
-### Phase 2: Page Migration ✅
+### Phase 2: UI Integration ⏳
 
-- [x] Extract camera functionality to `/camera` route
-- [x] Move photo gallery to `/gallery` route
-- [x] Move measurements to `/measurements` route
-- [x] Create settings page at `/settings`
-- [x] Clean up original single-page layout
+- [ ] Replace UserContext with NextAuth session
+- [ ] Add login/logout components
+- [ ] Create protected route wrapper
+- [ ] Update navigation with user profile
 
-### Phase 3: Enhanced UX
+### Phase 3: Data Security ⏳
 
-- [ ] Add page transitions and animations
-- [ ] Implement breadcrumbs/progress indicators
-- [ ] Ensure deep linking support
-- [ ] Polish navigation experience
+- [ ] Update API routes to use authenticated user ID
+- [ ] Migrate existing User ID system to auth sessions
+- [ ] Add user profile management page
+- [ ] Implement proper data isolation per user
+
+### Phase 4: Enhanced UX ⏳
+
+- [ ] Add user profile pictures
+- [ ] Implement session persistence
+- [ ] Add account settings page
+- [ ] Polish authentication flow
 
 ## Project Status
 
 **✅ Completed:**
 
 - TypeScript safety (strict mode, no 'any' types)
-- Component architecture (20 focused components <200 lines)
+- Component architecture (13 focused components <200 lines)
 - Modular business logic with service/validation layers
 - Production-ready logging system
 - Real-time photo refresh with event-driven updates
-- Multi-page navigation infrastructure (URL + state hybrid)
-- Complete page migration with dedicated routes
+- **Multi-page navigation system (URL + state hybrid)**
+- **Complete page migration with dedicated routes**
+- **Code cleanup and optimization (removed 590+ lines of unused code)**
 
 **🔄 Current Focus:**
 
-- Enhanced UX and navigation polish
+- NextAuth.js authentication implementation
 
 **📋 Backlog:**
 
@@ -86,3 +93,5 @@ BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
 - **Presentation components** - UI only
 - **Custom hooks** - API calls and complex state
 - **TypeScript interfaces** - type safety
+- **Multi-page routing** - URL-based navigation with state management
+- **Authentication** - NextAuth.js with OAuth providers (planned)
