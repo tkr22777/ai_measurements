@@ -73,11 +73,10 @@ export default function usePhotoCapture({}: UsePhotoCaptureProps = {}): UsePhoto
           return imageDataUrl;
         }
       } catch (err) {
-        const errorMsg = `Error capturing photo: ${err instanceof Error ? err.message : String(err)}`;
-        console.error(errorMsg);
+        // Error capturing photo - handled by return null
       }
     } else {
-      console.error('Cannot capture photo: Canvas element not available');
+      // Canvas element not available - handled by return null
     }
 
     return null;

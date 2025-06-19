@@ -32,7 +32,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
     try {
       await onUpload(selectedPhotoType);
     } catch (error) {
-      console.error('Error in handleUpload:', error);
+      // Error handling is done in the parent component
     }
   };
 

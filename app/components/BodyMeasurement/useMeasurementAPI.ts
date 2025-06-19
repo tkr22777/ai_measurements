@@ -52,7 +52,6 @@ export default function useMeasurementAPI({
           setMeasurementResult(null);
         }
       } catch (err) {
-        console.error('Error fetching measurement results:', err);
         // Don't show error to user, just fall back to input form
         setMeasurementResult(null);
       } finally {
@@ -120,7 +119,7 @@ export default function useMeasurementAPI({
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       setError(errorMessage);
-      console.error('Body measurement processing error:', err);
+      log.user.error(userId, 'measurement_processing_failed', err as Error);
     } finally {
       setIsProcessing(false);
     }

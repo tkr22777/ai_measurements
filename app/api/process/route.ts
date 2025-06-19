@@ -68,8 +68,9 @@ const callBodygramAPI = async (userHeight: number): Promise<BodygramApiResponse>
     const BODYGRAM_API_KEY = process.env.BODYGRAM_API_KEY;
 
     if (!BODYGRAM_ORG_ID || !BODYGRAM_API_KEY) {
-      console.error('Bodygram API credentials not found in environment variables');
-      throw new Error('Bodygram API credentials not configured');
+      const error = new Error('Bodygram API credentials not configured');
+      log.api.error('POST', '/api/process/bodygram', error);
+      throw error;
     }
 
     // Convert height from cm to mm for Bodygram API
@@ -331,11 +332,9 @@ export async function POST(request: Request) {
     // Store the result in Vercel Blob Storage
     const blobUrl = await storeInBlobStore(userId, processedResult);
     if (!blobUrl) {
-      console.warn(
-        'Failed to store measurement results in Vercel Blob, but continuing with response'
-      );
+      log.api.error('POST', '/api/process', new Error('Failed to store measurement results'));
     } else {
-      console.log(`Measurement results stored at: ${blobUrl}`);
+      log.api.response('POST', '/api/process/store', 200);
       processedResult.blobUrl = blobUrl;
     }
 
@@ -347,7 +346,7 @@ export async function POST(request: Request) {
       ...processedResult,
     });
   } catch (error) {
-    console.error('Processing error:', error);
+    log.api.error('POST', '/api/process', error as Error);
     return NextResponse.json(
       { success: false, error: 'Failed to process body measurements' },
       { status: 500 }
